@@ -1,0 +1,145 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // binaryTargets   = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// generator erd {
+//   provider = "prisma-erd-generator"
+//   output = "./ERD.pdf"
+// }
+
+model User {
+  id Int @id @default(autoincrement())
+
+  email       String  @unique
+  firstName   String
+  lastName    String
+  phoneNumber String?
+  avatarUrl   String?
+
+  passwordHash String // might change after this week's lecture
+  permission   String @default("USER") // USER, ADMIN; able to add more roles later; assume higher roles already have lower roles' permissions
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt // This field will be updated automatically
+
+  // Relationships
+  codeTemplates CodeTemplate[]
+  blogPosts     BlogPost[]
+  comments      Comment[]
+  ratings       Rating[]
+  reports       Report[]
+}
+
+model CodeTemplate {
+  id Int @id @default(autoincrement())
+
+  title       String @default("Untitled Template")
+  explanation String @default("No explanation provided.")
+  tags        String // I want String[] actually but sqlite doesn't support it unless we use relation. For now use comma to separate tags
+  content     String @default("No content provided.")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  forks       CodeTemplate[] @relation("forks") // forked templates
+  forkedFrom  CodeTemplate? @relation("forks", fields: [forkedFromId], references: [id])
+  forkedFromId Int?
+
+  // Relationships
+  authorId Int
+  author   User @relation(fields: [authorId], references: [id]) // id here in references: [id] refers to the id field in User model
+
+  blogPosts BlogPost[]
+}
+
+model BlogPost {
+  id Int @id @default(autoincrement())
+
+  title       String
+  content     String
+  tags        String // Use comma "," to separate tags
+
+  hidden      Boolean  @default(false) // hidden from public view (used for inappropriate content)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations  
+  authorId Int
+  author   User @relation(fields: [authorId], references: [id])
+
+  comments      Comment[]
+  ratings       Rating[]
+  reports       Report[]
+  codeTemplates CodeTemplate[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  content String
+
+  hidden      Boolean  @default(false) // hidden from public view (used for inappropriate content)
+
+  // Relations
+  authorId Int
+  author   User @relation(fields: [authorId], references: [id])
+
+  blogPostId Int
+  blogPost   BlogPost @relation(fields: [blogPostId], references: [id])
+
+  replies         Comment[] @relation("replies") // thread itself
+  parentCommentId Int?
+  parentComment   Comment?  @relation("replies", fields: [parentCommentId], references: [id])
+
+  reports Report[]
+  ratings Rating[]
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rating Int @default(0)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  blogPostId Int?
+  blogPost   BlogPost? @relation(fields: [blogPostId], references: [id])
+
+  commentId Int?
+  comment   Comment? @relation(fields: [commentId], references: [id])
+}
+
+model Report {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reason String
+
+  reporterId Int
+  reporter   User @relation(fields: [reporterId], references: [id])
+
+  blogPostId Int?
+  blogPost   BlogPost? @relation(fields: [blogPostId], references: [id])
+
+  commentId Int?
+  comment   Comment? @relation(fields: [commentId], references: [id])
+}

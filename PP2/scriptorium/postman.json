@@ -1,0 +1,2183 @@
+{
+	"info": {
+		"_postman_id": "4fed5bfc-3aa4-4d6f-ac2c-872604e8ed24",
+		"name": "Scriptorium",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27173223",
+		"_collection_link": "https://csc309-9783.postman.co/workspace/CSC309~f81b3e24-e224-4a43-8af1-86bd60c993a3/collection/27173223-4fed5bfc-3aa4-4d6f-ac2c-872604e8ed24?action=share&source=collection_link&creator=27173223"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test@gmail.com\",\r\n    \"firstName\": \"Test\",\r\n    \"lastName\": \"Account\",\r\n    \"password\": \"StrongPassword123!\",\r\n    \"phone\": \"1234567890\",\r\n    \"avatar\": \"https://example.com/avatar.jpg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/auth/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						},
+						"description": "The signup endpoint allows a new user to be signed up to the platform (ie. create an account for them)\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": an message indicating if the signup was successful\n    \n- \"user\": a user object with all of the newly signed up user's details"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"pm.globals.set('Auth Token', response.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test@gmail.com\",\r\n    \"password\": \"StrongPassword123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "The login endpoint authenticates and logs in a user for the current session on the platform if they exist.\n\n\\`Auth token\\` in the global variable will be automatically updated when this endpoint is ran via by Postman.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": an message indicating if the login was successful\n    \n- \"token\": an authorization token"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"pm.globals.set('Auth Token', response.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/auth/refresh_token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"refresh_token"
+							]
+						},
+						"description": "The refresh token endpoint checks the user token and extends its expiration.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": a message indicating if the operation was successful\n    \n- \"token\": an authorization token"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "The logout endpoint logs the user out of the session.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": a message indicating if the logout was successful"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test@gmail.com\",\r\n    \"firstName\": \"Test\",\r\n    \"lastName\": \"Account\",\r\n    \"password\": \"StrongPassword123!\",\r\n    \"phone\": \"1234567890\",\r\n    \"avatar\": \"https://example.com/avatar.jpg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/auth/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"profile"
+							]
+						},
+						"description": "The get profile endpoint gets the profile information of the corresponding user that matches the user ID of the current session's user.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"email\": the email of the user\n    \n- \"firstName\": the first name of the user\n    \n- \"lastName\": the last name of the user\n    \n- \"phoneNumber\": the phone number of the user\n    \n- \"avatarUrl\": the url to the users avatar\n    \n- \"permission\": the permission level of the user"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test@gmail.com\",\r\n    \"firstName\": \"Test\",\r\n    \"lastName\": \"Account\",\r\n    \"password\": \"StrongPassword123!\",\r\n    \"phone\": \"1234567890\",\r\n    \"avatar\": \"https://example.com/avatar.jpg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/auth/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"profile"
+							]
+						},
+						"description": "The put profile endpoint updates the profile information of the corresponding user that matches the user ID of the current session's user to match what is passed in the body of the request.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"id\": the id of the user\n    \n- \"email\": the email of the user\n    \n- \"firstName\": the first name of the user\n    \n- \"lastName\": the last name of the user\n    \n- \"phoneNumber\": the phone number of the user\n    \n- \"avatarUrl\": the url to the users avatar\n    \n- \"passwordHash\": the hash of the users password\n    \n- \"permission\": the permission level of the user\n    \n- \"createdAt\": the time the user was created at\n    \n- \"updatedAt\": the time the user was last updated"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blogs",
+			"item": [
+				{
+					"name": "List of Blogs (all)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/blog/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog",
+								""
+							]
+						},
+						"description": "The blog endpoint provides a list of all blog posts\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"blogs\": an array of blog objects\n    \n- \"total\": the total amount of blogs in the response\n    \n- \"page\": the page of the paginated blogs\n    \n- \"limit\": the limit of the amount of blogs in a page of the paginated blogs"
+					},
+					"response": []
+				},
+				{
+					"name": "List of Blogs (search)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/blog/?search=darknet diaries",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog",
+								""
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "darknet diaries"
+								}
+							]
+						},
+						"description": "The search blog endpoint allows the user to search for blog posts that match the value provided for the search query parameter\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"blogs\": an array of blog objects\n    \n- \"total\": the total amount of blogs in the response\n    \n- \"page\": the page of the paginated blogs\n    \n- \"limit\": the limit of the amount of blogs in a page of the paginated blogs"
+					},
+					"response": []
+				},
+				{
+					"name": "List of Blogs (by template)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/blog/?template_id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog",
+								""
+							],
+							"query": [
+								{
+									"key": "template_id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "The template blog endpoint allows the user to search for blog posts that contain the code template with the id matching the value provided for the template_id query parameter\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"blog_by_template\": an array of blog objects\n    \n- \"template_total\": the total amount of blogs in the response\n    \n- \"page\": the page of the paginated blogs\n    \n- \"limit\": the limit of the amount of blogs in a page of the paginated blogs"
+					},
+					"response": []
+				},
+				{
+					"name": "List of Blogs (by rating)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/blog/?sort_by_rating=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog",
+								""
+							],
+							"query": [
+								{
+									"key": "sort_by_rating",
+									"value": "1"
+								}
+							]
+						},
+						"description": "The rating blog endpoint allows the user to search for blog posts filtering by blog posts that have the same rating as the value provided for the sort_by_rating query parameter\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"blog_by_rating\": an array of blog objects\n    \n- \"rating_total\": the total amount of blogs in the response\n    \n- \"page\": the page of the paginated blogs\n    \n- \"limit\": the limit of the amount of blogs in a page of the paginated blogs"
+					},
+					"response": []
+				},
+				{
+					"name": "Add New Blog",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Nope!!!!\",\r\n    \"content\": \"JUst content!\",\r\n    \"tags\": \"javascript,web development\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/blog",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog"
+							]
+						},
+						"description": "The new blog endpoint allows users to make a new blog post with the given information in the body of the request\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"id\": the id of the new blog\n    \n- \"title\": the title of the new blog\n    \n- \"content\": the content of the new blog\n    \n- \"tags\": the tags of the new blog\n    \n- \"hidden\": a boolean indicating if the new blog is hidden\n    \n- \"createdAt\": the time the new blog was created at\n    \n- \"updatedAt\": the time the new blog was last updated\n    \n- \"authorId\": the ID of the author of the new blog"
+					},
+					"response": []
+				},
+				{
+					"name": "Add New Blog with Template",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"new blog with code\",\r\n    \"content\": \"JUst content!\",\r\n    \"tags\": \"javascript,web development\",\r\n    \"codeTemplateIds\": [1]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/blog?Content-Type=application/json",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							]
+						},
+						"description": "The new blog endpoint allows users to make a new blog post with the given information in the body of the request\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"id\": the id of the new blog\n    \n- \"title\": the title of the new blog\n    \n- \"content\": the content of the new blog\n    \n- \"tags\": the tags of the new blog\n    \n- \"hidden\": a boolean indicating if the new blog is hidden\n    \n- \"createdAt\": the time the new blog was created at\n    \n- \"updatedAt\": the time the new blog was last updated\n    \n- \"authorId\": the ID of the author of the new blog"
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Blog",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My idk how many Blog Post\",\r\n    \"content\": \"This is a content of my first blog post.\",\r\n    \"tags\": \"javascript,cybersecurity\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/blog/edit/1?Content-Type=application/json",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog",
+								"edit",
+								"1"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							]
+						},
+						"description": "The edit blog endpoint allows a user to edit an existing blog post by updating its information to match the information provided in the body of the request\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"id\": the id of the edited blog\n    \n- \"title\": the title of the edited blog\n    \n- \"content\": the content of the edited blog\n    \n- \"tags\": the tags of the edited blog\n    \n- \"hidden\": a boolean indicating if the edited blog is hidden\n    \n- \"createdAt\": the time the edited blog was created at\n    \n- \"updatedAt\": the time the edited blog was last updated\n    \n- \"authorId\": the ID of the author of the edited blog"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Blog",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My First Blog Post\",\r\n    \"content\": \"This is a content of my first blog post. I like the harry potter book series!\",\r\n    \"tags\": \"javascript,web development\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/blog/delete/1?Content-Type=application/json",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog",
+								"delete",
+								"1"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							]
+						},
+						"description": "The delete blog endpoint allows users to delete an existing blog post\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": a message indicating if the deletion was successful"
+					},
+					"response": []
+				},
+				{
+					"name": "Post Blog Comments",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\": \"This is a content of my first blog post comment. I like the harry potter book series!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/blog/1/add_comment?Content-Type=application/json",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog",
+								"1",
+								"add_comment"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							]
+						},
+						"description": "The blog comments endpoint allows users to post comments to a specific blog post\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"id\": the id of the new comment\n    \n- \"createdAt\": the time the new comment was created at\n    \n- \"updatedAt\": the time the new comment was last updated\n    \n- \"content\": the content of the new comment\n    \n- \"hidden\": a boolean indicating if the new comment is hidden\n    \n- \"authorId\": the ID of the author of the new comment\n    \n- \"blogPostId\": the ID of the associated blog post\n    \n- \"parentCommentId\": the id of the parent comment, if applicable"
+					},
+					"response": []
+				},
+				{
+					"name": "Post Blog Rating",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ratingValue\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/blog/1/add_rate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog",
+								"1",
+								"add_rate"
+							]
+						},
+						"description": "The blog rating endpoint allows users to leave a rating of a specific blog post\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"id\": the id of the new rating\n    \n- \"createdAt\": the time the new rating was created at\n    \n- \"updatedAt\": the time the new rating was last updated\n    \n- \"rating\": the rating value\n    \n- \"userId\": the ID of the user leaving the rating\n    \n- \"blogPostId\": the ID of the associated blog post\n    \n- \"commentId\": the id of the corresponding comment, if applicable"
+					},
+					"response": []
+				},
+				{
+					"name": "List Blog Comments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/blog/1/get_comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog",
+								"1",
+								"get_comments"
+							]
+						},
+						"description": "The blog comments endpoint provides a list of all comments on a blog.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"comments\": an array of comment objects\n    \n- \"totalPages\": the total amount of pages of comments in the response\n    \n- \"page\": the page of the paginated comments\n    \n- \"totalComments\": the limit of the amount of comments in a page of the paginated comments"
+					},
+					"response": []
+				},
+				{
+					"name": "Average rating of blog",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/blog/1/get_rates",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog",
+								"1",
+								"get_rates"
+							]
+						},
+						"description": "The blog rating endpoint provides the average and total ratings.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"totalRates\": the total number of ratings\n    \n- \"averageRate\": the average rating of all the ratings"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Code Run",
+			"item": [
+				{
+					"name": "Highlight Code Syntax",
+					"item": [
+						{
+							"name": "Highlight Code Syntax (Success)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"print('hello world')\",\n    \"language\": \"Python\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/highlight",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"highlight"
+									]
+								},
+								"description": "The highlight code syntax endpoint highlights the code when it is successful\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"highlightedCode\": a string of the code with the text formatted to be highlighted correctly"
+							},
+							"response": []
+						},
+						{
+							"name": "Highlight Code Syntax Error",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"print('hello world')\",\n    \"language\": \"nonexistentlanguage\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/highlight",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"highlight"
+									]
+								},
+								"description": "The highlight code syntax endpoint returns a 500 error if it fails to highlight the code\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"error\": the error message\n    \n- \"details\": the details about the error"
+							},
+							"response": []
+						},
+						{
+							"name": "Highlight Code Syntax without Code",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"language\": \"Python\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/highlight",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"highlight"
+									]
+								},
+								"description": "The highlight code syntax endpoint should return a 400 error if no code is provided\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": a message containing the error"
+							},
+							"response": []
+						},
+						{
+							"name": "Highlight Code Syntax Method Not Allowed",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"print('hello world')\",\n    \"language\": \"Python\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/highlight",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"highlight"
+									]
+								},
+								"description": "The highlight code syntax endpoint should return a 405 error if an incorrect method (ie POST) is used.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": a message containing the error"
+							},
+							"response": []
+						},
+						{
+							"name": "Highlight Code Syntax without Language",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"print('hello world')\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/highlight",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"highlight"
+									]
+								},
+								"description": "The highlight code syntax endpoint should return a 400 error if no language is provided\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": a message containing the error"
+							},
+							"response": []
+						}
+					],
+					"description": "The highlight syntax endpoint manages the highlighting of the code in the proper syntax of the language provided"
+				},
+				{
+					"name": "Execute Code (Success)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"print('hello world')\",\n    \"language\": \"Python\",\n    \"input\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code_run/execute_code",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code_run",
+								"execute_code"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "language",
+									"value": null,
+									"disabled": true
+								}
+							]
+						},
+						"description": "The execute code endpoint executes the code in the language provided with any given input based on the information provided in the request body and returns the results of the code execution in real time.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"executionResult\": the result of if the execution was successful\n    \n- \"output\": the output of the code"
+					},
+					"response": [
+						{
+							"name": "For Loop - Python (Success)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"for i in range(1, 5):\\n    print(i)\",\n    \"language\": \"Python\",\n    \"input\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/execute_code",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"execute_code"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "language",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Single Input - Python (Success)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"name = input('Enter your name: ')\\nprint(f'Hello, {name}!')\",\r\n    \"language\": \"Python\",\r\n    \"input\": \"Alice\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/execute_code",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"execute_code"
+									]
+								}
+							},
+							"_postman_previewlanguage": "",
+							"header": [
+								{}
+							],
+							"cookie": [
+								{
+									"expires": "Invalid Date"
+								}
+							],
+							"body": ""
+						},
+						{
+							"name": "Multiple Input - Python (Success)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"for i in range(1, 10):\\n    x = input()\\n    print(x)\",\n    \"language\": \"Python\",\n    \"input\": \"input1\\ninput2\\ninput3\\ninput4\\ninput5\\ninput6\\ninput7\\ninput8\\ninput9\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/execute_code",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"execute_code"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "language",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "StdError - Python (Error)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"print(\\\"Attempting to divide by zero...\\\")\\nresult = 10 / 0\\nprint(\\\"This line will not be executed.\\\")\",\n    \"language\": \"Python\",\n    \"input\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/execute_code",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"execute_code"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "language",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Print - Java (Success)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"public class HelloWorld { public static void main(String[] args) { System.out.println(\\\"Hello, World!\\\"); } }\",\n    \"language\": \"Java\",\n    \"input\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/execute_code",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"execute_code"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "language",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Multiple Input - Java (Success)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"code\": \"import java.util.Scanner;\\n\\npublic class Main {\\n    public static void main(String[] args) {\\n        Scanner scanner = new Scanner(System.in);\\n        for(int i = 0; i < 9; i++) {\\n            String input = scanner.nextLine();\\n            System.out.println(input);\\n        }\\n    }\\n}\",\n  \"language\": \"Java\",\n  \"input\": \"input1\\ninput2\\ninput3\\ninput4\\ninput5\\ninput6\\ninput7\\ninput8\\ninput9\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/execute_code",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"execute_code"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "language",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Multiple Input - C (Success)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"code\": \"#include <stdio.h>\\n\\nint main() {\\n    char input[100];\\n    for(int i = 0; i < 9; i++) {\\n        fgets(input, sizeof(input), stdin);\\n        printf(\\\"%s\\\", input);\\n    }\\n    return 0;\\n}\",\n  \"language\": \"C\",\n  \"input\": \"input1\\ninput2\\ninput3\\ninput4\\ninput5\\ninput6\\ninput7\\ninput8\\ninput9\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/execute_code",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"execute_code"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "language",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Multiple Input - C++ (Success)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"code\": \"#include <iostream>\\n#include <string>\\n\\nint main() {\\n    std::string input;\\n    for(int i = 0; i < 9; i++) {\\n        std::getline(std::cin, input);\\n        std::cout << input << std::endl;\\n    }\\n    return 0;\\n}\",\n  \"language\": \"C++\",\n  \"input\": \"input1\\ninput2\\ninput3\\ninput4\\ninput5\\ninput6\\ninput7\\ninput8\\ninput9\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/execute_code",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"execute_code"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "language",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Multiple Input - JS (Success)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"code\": \"const readline = require('readline');\\n\\nconst rl = readline.createInterface({\\n  input: process.stdin,\\n  output: process.stdout,\\n  terminal: false\\n});\\n\\nlet count = 0;\\nconst totalInputs = 9;\\n\\nrl.on('line', (line) => {\\n  console.log(line);\\n  count++;\\n  if (count === totalInputs) {\\n    rl.close();\\n  }\\n});\\n\\nrl.on('close', () => {\\n  process.exit(0);\\n});\",\r\n  \"language\": \"JavaScript\",\r\n  \"input\": \"input1\\ninput2\\ninput3\\ninput4\\ninput5\\ninput6\\ninput7\\ninput8\\ninput9\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code_run/execute_code",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code_run",
+										"execute_code"
+									]
+								}
+							},
+							"_postman_previewlanguage": "",
+							"header": [
+								{}
+							],
+							"cookie": [
+								{
+									"expires": "Invalid Date"
+								}
+							],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Execute Code without Code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"language\": \"Python\",\n    \"input\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code_run/execute_code",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code_run",
+								"execute_code"
+							]
+						},
+						"description": "The execute_code endpoint should return an error response if no code is provided\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": a message containing the error"
+					},
+					"response": []
+				},
+				{
+					"name": "Execute Code without Language",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"print('hello world')\",\n    \"input\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code_run/execute_code",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code_run",
+								"execute_code"
+							]
+						},
+						"description": "The execute_code endpoint should return an error response if no language is provided\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": a message containing the error"
+					},
+					"response": []
+				},
+				{
+					"name": "Execute Code without Input",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"language\": \"Python\",\n    \"code\": \"print('hello world')\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code_run/execute_code",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code_run",
+								"execute_code"
+							]
+						},
+						"description": "The execute_code endpoint should still run properly if no input is provided (assuming the code and language provided work correctly).\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": a message containing the error"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Code Template",
+			"item": [
+				{
+					"name": "Create Template",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"My Code Template\",\r\n    \"explanation\": \"This is a sample template.\",\r\n    \"tags\": [\"sample\", \"code\"],\r\n    \"content\": \"def hello_world():\\n    print('Hello, World!')\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code_template/user/create_template",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code_template",
+								"user",
+								"create_template"
+							]
+						},
+						"description": "The create template endpoint allows users to create a new code template with the information provided in the body of the request\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": message stating if the template was created successfully\n    \n- \"template\": a template object with various information about the template"
+					},
+					"response": []
+				},
+				{
+					"name": "Search User Templates",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/code_template/user/search_template?search=sample&page=1&limit=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code_template",
+								"user",
+								"search_template"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "sample"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						},
+						"description": "The search user templates endpoint allows users to search for a specific template\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"templates\": an array of template objects (each of which contain various information about a template such as id and title)"
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Template",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Updated Template Title\",\r\n    \"explanation\": \"Updated explanation.\",\r\n    \"tags\": [\"updated\", \"template\"],\r\n    \"content\": \"def updated_function():\\n    print('Updated content')\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code_template/user/edit_or_delete_template?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code_template",
+								"user",
+								"edit_or_delete_template"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "The edit template endpoint allows users to edit a given template by modifying the information to match what is provided in the request body\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": message stating if the template was edited successfully\n    \n- \"template\": a template object with various information about the edited template"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Template",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/code_template/user/edit_or_delete_template?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code_template",
+								"user",
+								"edit_or_delete_template"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "The delete template endpoint allows users to delete a specific endpoint\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": message stating if the template was deleted successfully"
+					},
+					"response": []
+				},
+				{
+					"name": "Fork Template",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Forked Template\",\r\n    \"explanation\": \"This is a forked version.\",\r\n    \"tags\": [\"forked\"],\r\n    \"content\": \"def forked_function():\\n    print('Forked content')\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code_template/user/create_fork_template?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code_template",
+								"user",
+								"create_fork_template"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "The fork template endpoint allows users to fork an existing template\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": message stating if the template was forked successfully\n    \n- \"template\": a template object with various information about the forked template"
+					},
+					"response": []
+				},
+				{
+					"name": "Visitor Search Templates",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/code_template/visitor/search_template?search=sample&page=1&limit=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code_template",
+								"visitor",
+								"search_template"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "sample"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						},
+						"description": "The visitor search templates endpoint allows visitors to view blog posts that mention a code template\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"templates\": an array of template objects"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Average rating of comment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/comments/1/get_rates",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"comments",
+								"1",
+								"get_rates"
+							]
+						},
+						"description": "The average rating of comment endpoint calculates the average rating given to a comment based on the total ratings it has received.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"totalRates\": the total number of ratings given to the comment\n    \n- \"averageRate\": the average rating given to the comment"
+					},
+					"response": []
+				},
+				{
+					"name": "Post Comment Rating",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ratingValue\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/comments/1/add_rate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"comments",
+								"1",
+								"add_rate"
+							]
+						},
+						"description": "The blog rating endpoint allows users to leave a rating of a specific blog post\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"id\": the id of the new blog rating\n    \n- \"createdAt\": the time the new blog rating was created at\n    \n- \"updatedAt\": the time the new blog rating was last updated\n    \n- \"rating\": the rating value of the new blog rating\n    \n- \"userId\": a boolean indicating if the new blog rating is hidden\n    \n- \"blogPostId\": the ID of the associated blog post\n    \n- \"commentId\": the id of the corresponding comment"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Inappropriate Content",
+			"item": [
+				{
+					"name": "Report blog post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"reason\": \"Inappropriate content\",\r\n    \"blogPostId\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/report",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"report"
+							]
+						},
+						"description": "The report endpoint allows users to report an inappropriate blog post.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"id\": the id of the new report\n    \n- \"createdAt\": the time the new report was created at\n    \n- \"updatedAt\": the time the new report was last updated\n    \n- \"reason\": the reason of the new report\n    \n- \"reporterId\": the ID of the user reporting\n    \n- \"blogPostId\": the ID of the associated blog post\n    \n- \"commentId\": the id of the corresponding comment"
+					},
+					"response": []
+				},
+				{
+					"name": "Report comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"reason\": \"Inappropriate content\",\r\n    \"commentId\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/report",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"report"
+							]
+						},
+						"description": "The report endpoint allows users to report an inappropriate comment.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"id\": the id of the new report\n    \n- \"createdAt\": the time the new report was created at\n    \n- \"updatedAt\": the time the new report was last updated\n    \n- \"reason\": the reason of the new report\n    \n- \"reporterId\": the ID of the user reporting\n    \n- \"blogPostId\": the ID of the associated blog post\n    \n- \"commentId\": the id of the corresponding comment"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin - get sorted content based on reports",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/admin/get_sorted_reports",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"get_sorted_reports"
+							]
+						},
+						"description": "The get sorted content based on reports endpoint should allow only ADMIN users to get an array of content that has reports. If the user does not have ADMIN permission, they should get a 403 status and a message saying forbidden.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"blogPosts\": an array of blog objects that have been reported\n    \n- \"comments\": an array of comment objects that have been reported\n    \n- \"page\": the page of the paginated blog/comment objects\n    \n- \"limit\": the limit of the amount of blog/comment objects in a page of the paginated blogs/comments"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin - hide blog post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"contentType\": \"blogPost\",\r\n  \"contentId\": \"2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/admin/hide_content",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"hide_content"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "The hide blog post endpoint allows admins to hide a blog post. Non-admins will get a 403 error and message stating that it is forbidden.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": a message stating if the blog post has been hidden\n    \n- \"hiddenContent\": the blog post object that has been hidden"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin - hide comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"contentType\": \"comment\",\r\n  \"contentId\": \"2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/admin/hide_content",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"hide_content"
+							]
+						},
+						"description": "The hide comment endpoint allows admins to hide a comment. Non-admins will get a 403 error and message stating that it is forbidden.\n\nThe endpoint will respond with a JSON with an object containing:\n\n- \"message\": a message stating if the comment has been hidden\n    \n- \"hiddenContent\": the comment object that has been hidden"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
