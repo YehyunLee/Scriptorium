@@ -1,0 +1,40 @@
+Scriptorium features
+The following paragraphs describe the features that should be included in Scriptorium. As stated earlier, features are explained in terms of user stories, in a non-technical form, and from an imaginary user’s point of view. Details that are not discussed below are left out to you, and you get to design or implement them your way.
+
+Stories that start with as a user indicate a feature that only authenticated users can access, while ones that start with as a visitor indicate features that are available to everyone that visits the website, whether logged in or not. Finally, stories that start with as the system administrator indicate a feature that only users with admin privileges can access.
+
+Important note: The below user stories are for the full website. You are not going to implement all of them in part 1. However, it is important to keep the full picture of the app in your mind, even during part 1.
+
+Accounts
+As a user, I want to sign up, log in, log out, and edit my profile. Profile information should include first and last name, email, profile picture (or avatar), and phone number. Authentication should be handled with a proper JWT setup.
+Code writing and execution
+As a visitor (unauthenticated user), I want to write code in various programming languages (e.g., C, C++, Java, Python, JavaScript) on Scriptorium.
+As a visitor, I want my code to be highlighted based on the syntax rules of the programming language so that I get a good understanding of my code.
+As a visitor, I want to execute my code on Scriptorium and see the output in real-time so that I can quickly verify its correctness.
+As a visitor, I want to provide input to my code via the standard input (stdin) before execution so that I can test programs that require user input.
+As a visitor, I want to see error messages if my code fails to compile or run so that I can debug my code effectively. This includes compile errors, runtime errors, timeouts, or any warnings generated in the meantime.
+Isolation
+As a visitor, I want my code to run in a secure, isolated environment so that it does not affect other users or the system.
+As a visitor, I want the system to enforce a time and memory limit on code execution so that infinite loops or long-running processes are automatically terminated.
+Code templates
+As a user (authenticated), I want to save my code as a template with a title, explanation, and tags so that I can organize and share my work effectively.
+As a user, I want to view and search through my list of my saved templates, including their titles, explanations, and tags, so that I can easily find and reuse them.
+As a user, I want to edit an existing code template’s title, explanation, tags, and code, or delete it entirely.
+As a visitor, I want to use an existing code template, run or modify it, and if desired, save it as a new template with a notification that it’s a forked version, so I can build on others’ work. Saving a template is only available to authenticated users.
+As a visitor, I want to search through all available templates by title, tags, or content so that I can quickly find relevant code for my needs.
+Blog posts
+As a user, I want to create/edit/delete blog posts. A blog post has title, description, and tag. It might also include links to code templates (either mine or someone else’s).
+As a visitor, I want to browse and read blog posts so that I can learn from others’ experiences and code examples. I want to search through blog posts by their title, content, tags, and also the code templates they contain.
+As a visitor, I want to follow links from a blog post directly to the relevant code template so that I can view, run, or fork the code discussed.
+As a visitor, I want to see the list of blog posts that mention a code template on the template page.
+As a user, I want to comment, or reply to existing comments on a blog post so that I can engage with the author and other readers by sharing feedback, asking questions, or starting discussions.
+As a user, I want to rate blog posts and comments with upvotes or downvotes so that I can express my agreement or disagreement with the content.
+As a visitor, I want to see the list of blog posts and comments sorted by their ratings so that I get exposed to the most valued or controversial discussions first.
+Inappropriate content reports
+As a user, I want to report an inappropriate blog post or comment so that the website is purged of abusive content. I want to add additional explanation when submitting my report.
+As the system administrator, I want to sort blog posts and comments based on the total number of reports they received so that I can find the inappropriate content easier.
+As the system administrator, I want to hide a content that I deem inappropriate so that Scriptorium remains safe for everyone. This content would then be hidden from everyone, except for the author. The author can still see the content (with a flag that indicates the reports), but cannot edit it.
+User experience
+As a visitor, I want a clean and intuitive user interface so that I can easily write, execute, and manage my code templates without confusion.
+As a visitor, I want the website to be rendered well in different screen sizes (e.g., monitors, laptop, tablet, and mobile) so I can effectively work on my codes everywhere.
+As a visitor, I want to be able to toggle between dark and light themes so that I can choose the most comfortable working environment.

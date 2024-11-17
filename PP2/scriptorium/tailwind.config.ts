@@ -9,9 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-      },
+        navy: '#0a192f',
+        gold: '#ffd700',
+      }
     },
   },
   plugins: [],
