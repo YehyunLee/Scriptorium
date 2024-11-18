@@ -1,20 +1,32 @@
 import { NextApiRequest } from 'next';
-import { verifyAccessToken } from './auth/jwt.js';
-import { TokenPayload } from '@/types/auth.js';
+import { verifyAccessToken } from './auth/jwt';
+import { TokenPayload } from '@/types/auth';
 
 export function verifyUser(req: NextApiRequest): TokenPayload | null {
-    // [Authenticated route]
+    try {
+        // Try cookie first
+        const tokenFromCookie = req.cookies.accessToken;
+        
+        // Fallback to header
     const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith('Bearer ')) {
+        const tokenFromHeader = authHeader?.startsWith('Bearer ') 
+            ? authHeader.split(' ')[1] 
+            : null;
+
+        const accessToken = tokenFromCookie || tokenFromHeader;
+
+        if (!accessToken) {
         return null;
     }
 
-    const accessToken = authHeader.split(' ')[1];
-    const payload = verifyAccessToken(accessToken);
+        const decoded = verifyAccessToken(accessToken);
+        if (!decoded || decoded.type !== 'access') {
+            return null;
+        }
 
-    if (!payload || payload.type !== 'access') {
+        return decoded;
+    } catch (error) {
+        console.error('Token verification error:', error);
         return null;
     }
-    
-    return payload;
 }
