@@ -8,6 +8,11 @@ export default function CreateTemplate() {
     content: "",
   });
 
+  const [responseMessage, setResponseMessage] = useState<{
+    message: string;
+    type: "success" | "error" | null;
+  }>({ message: "", type: null });
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -15,6 +20,7 @@ export default function CreateTemplate() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setResponseMessage({ message: "", type: null });
 
     try {
       const response = await fetch("/api/code_template/user/create_template", {
@@ -26,12 +32,17 @@ export default function CreateTemplate() {
       });
 
       if (response.ok) {
+        setResponseMessage({ message: "Template created successfully!", type: "success" });
         setFormData({ title: "", explanation: "", tags: "", content: "" }); // Reset form
       } else {
         const error = await response.json();
+        setResponseMessage({
+          message: `Error: ${error.message || "Failed to create template"}`,
+          type: "error",
+        });
       }
     } catch (error: any) {
-        console.log("error creating template")
+      setResponseMessage({ message: `Error: ${error.message}`, type: "error" });
     }
   };
 
@@ -83,7 +94,7 @@ export default function CreateTemplate() {
               name="tags"
               value={formData.tags}
               onChange={handleInputChange}
-              placeholder="e.g., JavaScript, React, Tailwind"
+              placeholder="e.g., JavaScript, Python, C"
               className="mt-1 text-black block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
@@ -97,7 +108,7 @@ export default function CreateTemplate() {
               name="content"
               value={formData.content}
               onChange={handleInputChange}
-              placeholder="Write your content here"
+              placeholder="Write your code here"
               rows={6}
               className="mt-1 text-black block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
@@ -112,6 +123,16 @@ export default function CreateTemplate() {
             </button>
           </div>
         </form>
+        
+        {responseMessage.message && (
+          <div
+            className={`mt-4 text-center ${
+              responseMessage.type === "success" ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {responseMessage.message}
+          </div>
+        )}
       </div>
     </div>
   );
