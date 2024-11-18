@@ -18,13 +18,13 @@ export default function CreateTemplate() {
   };
 
   return (
-    <div className="">
-      <div className="">
-        <h2 className="">Create a Code Template</h2>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-5">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">Create a Code Template</h2>
         <form onSubmit={handleSubmit}>
 
-          <div className="">
-            <label htmlFor="title" className="">
+          <div className="mb-4">
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
               Title
             </label>
             <input
@@ -35,12 +35,12 @@ export default function CreateTemplate() {
               onChange={handleInputChange}
               placeholder="Enter title"
               required
-              className=""
+              className="mt-1 text-black block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
           
-          <div className="">
-            <label htmlFor="explanation" className="">
+          <div className="mb-4">
+            <label htmlFor="explanation" className="block text-sm font-medium text-gray-700">
               Explanation
             </label>
             <textarea
@@ -51,12 +51,12 @@ export default function CreateTemplate() {
               placeholder="Explain your template"
               rows={4}
               required
-              className=""
+              className="mt-1 text-black block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
           
-          <div className="">
-            <label htmlFor="tags" className="">
+          <div className="mb-4">
+            <label htmlFor="tags" className="block text-sm font-medium text-gray-700">
               Tags
             </label>
             <input
@@ -65,12 +65,12 @@ export default function CreateTemplate() {
               name="tags"
               value={formData.tags}
               onChange={handleInputChange}
-              placeholder="e.g., JavaScript, Python, C"
-              className=""
+              placeholder="e.g., JavaScript, React, Tailwind"
+              className="mt-1 text-black block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
           
-          <div className="">
+          <div className="mb-4">
             <label htmlFor="content" className="block text-sm font-medium text-gray-700">
               Content (optional)
             </label>
@@ -79,16 +79,16 @@ export default function CreateTemplate() {
               name="content"
               value={formData.content}
               onChange={handleInputChange}
-              placeholder="Write your code here"
+              placeholder="Write your content here"
               rows={6}
-              className=""
+              className="mt-1 text-black block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
           
-          <div className="">
+          <div className="mt-6">
             <button
               type="submit"
-              className=""
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Create Template
             </button>
