@@ -41,4 +41,4 @@ function verifyRefreshToken(token: string): TokenPayload | null {
 }
 
 // Exports
-export { generateToken, verifyToken };
+export { generateAuthTokens, verifyAccessToken, verifyRefreshToken };
