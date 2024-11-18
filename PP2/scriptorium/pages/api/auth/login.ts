@@ -1,3 +1,4 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcryptjs';
 import prisma from '../../../utils/prisma';
 import { generateToken } from '../../../utils/auth/jwt';
@@ -10,7 +11,7 @@ import { generateToken } from '../../../utils/auth/jwt';
  * Access: Public
  * Payload: { email, password }
  */
-export default async function login(req, res) {
+export default async function login(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
         res.setHeader('Allow', ['POST']);
         res.status(405).json({ message: `Method ${req.method} not allowed` });

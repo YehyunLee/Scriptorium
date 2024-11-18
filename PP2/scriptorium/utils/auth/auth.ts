@@ -1,5 +1,5 @@
 // password validation
-function validatePassword(password) {
+function validatePassword(password: string): boolean {
     // Password rules:
     // 1- Password must be at least 8 characters long
     // 2- Password must contain at least one letter
