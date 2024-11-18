@@ -15,6 +15,24 @@ export default function CreateTemplate() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    try {
+      const response = await fetch("/api/code_template/user/create_template", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setFormData({ title: "", explanation: "", tags: "", content: "" }); // Reset form
+      } else {
+        const error = await response.json();
+      }
+    } catch (error: any) {
+        console.log("error creating template")
+    }
   };
 
   return (
