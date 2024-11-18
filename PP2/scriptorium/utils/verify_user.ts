@@ -8,7 +8,7 @@ export function verifyUser(req: NextApiRequest): TokenPayload | null {
         const tokenFromCookie = req.cookies.accessToken;
         
         // Fallback to header
-    const authHeader = req.headers.authorization;
+        const authHeader = req.headers.authorization;
         const tokenFromHeader = authHeader?.startsWith('Bearer ') 
             ? authHeader.split(' ')[1] 
             : null;
@@ -16,8 +16,8 @@ export function verifyUser(req: NextApiRequest): TokenPayload | null {
         const accessToken = tokenFromCookie || tokenFromHeader;
 
         if (!accessToken) {
-        return null;
-    }
+            return null;
+        }
 
         const decoded = verifyAccessToken(accessToken);
         if (!decoded || decoded.type !== 'access') {
