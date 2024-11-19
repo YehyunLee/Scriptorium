@@ -1,11 +1,24 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useAuth } from "../pages/contexts/auth_context";
 
 // Reusing some code from Yehyun's exercise 9
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const router = useRouter();
+  const { isAuthenticated, user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      logout();
+      router.push('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   return (
     <nav className="bg-navy border-b border-gold/30">
@@ -37,6 +50,56 @@ const NavBar = () => {
             >
               Blog
             </Link>
+
+            {/* Auth Buttons */}
+            {!isAuthenticated ? (
+              <div className="flex items-center space-x-4">
+                <Link href="/login" 
+                      className="text-white hover:text-gold transition">
+                  Login
+                </Link>
+                <Link href="/signup"
+                      className="bg-gold text-navy px-4 py-2 rounded-md hover:bg-gold/90 transition">
+                  Sign Up
+                </Link>
+              </div>
+            ) : (
+              <div className="relative">
+                <button
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center space-x-2 text-white hover:text-gold transition"
+                >
+                  <span>{user?.firstName || 'Profile'}</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Profile Dropdown */}
+                {isProfileOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-navy border border-gold/30 rounded-md shadow-lg">
+                    <Link href="/profile"
+                          className="block px-4 py-2 text-white hover:bg-gold/10 transition">
+                      My Profile
+                    </Link>
+                    <Link href="/my-templates"
+                          className="block px-4 py-2 text-white hover:bg-gold/10 transition">
+                      My Templates
+                    </Link>
+                    <Link href="/my-posts"
+                          className="block px-4 py-2 text-white hover:bg-gold/10 transition">
+                      My Posts
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-white hover:bg-gold/10 transition"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Mobile */}
@@ -94,6 +157,34 @@ const NavBar = () => {
             >
               Blog
             </Link>
+            {!isAuthenticated ? (
+              <>
+                <Link href="/login" className="block px-3 py-2 text-white hover:text-gold">
+                  Login
+                </Link>
+                <Link href="/signup" className="block px-3 py-2 text-white hover:text-gold">
+                  Sign Up
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/profile" className="block px-3 py-2 text-white hover:text-gold">
+                  My Profile
+                </Link>
+                <Link href="/my-templates" className="block px-3 py-2 text-white hover:text-gold">
+                  My Templates
+                </Link>
+                <Link href="/my-posts" className="block px-3 py-2 text-white hover:text-gold">
+                  My Posts
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-3 py-2 text-white hover:text-gold"
+                >
+                  Logout
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

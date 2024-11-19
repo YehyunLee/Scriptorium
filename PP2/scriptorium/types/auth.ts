@@ -18,3 +18,18 @@ export interface UserProfile {
     avatarUrl?: string;
     permission: string;
 }
+
+
+export interface User {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface AuthContextType {
+  isAuthenticated: boolean;
+  user: User | null;
+  login: (token: string) => void;
+  logout: () => void;
+}
