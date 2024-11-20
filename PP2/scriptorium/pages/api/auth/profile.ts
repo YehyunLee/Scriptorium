@@ -1,6 +1,7 @@
 import prisma from '../../../utils/prisma';
-import { verifyUser } from '../../../utils/verify_user.js';
+import { verifyUser } from '../../../utils/verify_user';
 import bcrypt from "bcryptjs";
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 
 /**
@@ -10,13 +11,14 @@ import bcrypt from "bcryptjs";
  * Access: User
  * Payload: None for GET, {firstName, lastName, email, avatar, phone, password} for PUT
  */
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const user = verifyUser(req);
 
     if (!user) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
+  try {
     if (req.method === 'GET') {
         const profile = await prisma.user.findUnique({
             where: { id: user.userId },
@@ -28,17 +30,28 @@ export default async function handler(req, res) {
     if (req.method === 'PUT') {
         const { firstName, lastName, email, avatar, phone, password } = req.body;
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const updateData: any = {
+        ...(firstName && { firstName }),
+        ...(lastName && { lastName }),
+        ...(email && { email }),
+        ...(phone && { phoneNumber: phone }),
+        ...(avatar && { avatarUrl: avatar }),
+      };
+
+      if (password) {
+        updateData.passwordHash = await bcrypt.hash(password, 10);
+      }
 
         const updatedUser = await prisma.user.update({
             where: { id: user.userId },
-            data: {
-                email: email,
-                firstName: firstName,
-                lastName: lastName,
-                phoneNumber: phone,
-                avatarUrl: avatar,
-                passwordHash: hashedPassword,
+        data: updateData,
+        select: {
+          email: true,
+          firstName: true,
+          lastName: true,
+          phoneNumber: true,
+          avatarUrl: true,
+          permission: true,
             },
         });
 
@@ -47,4 +60,7 @@ export default async function handler(req, res) {
 
     res.setHeader('Allow', ['GET', 'PUT']);
     res.status(405).json({ message: `Method ${req.method} not allowed` });
+} catch (error) {
+    res.status(500).json({ error: 'Failed to update profile' });
+}
 }

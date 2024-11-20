@@ -1,0 +1,30 @@
+A Prisma schema defining your data models
+An existing TypeScript backend from part 1
+Need to build a React+TypeScript frontend
+Need to containerize code execution with Docker
+Need to implement pagination, proper UI/UX, and pre-populated data
+Your approach of converting JS endpoints to TS one by one while building the frontend is sensible. Let's tackle this systematically:
+
+For each feature we implement on the frontend, we'll:
+
+Review/convert the related backend endpoint to TypeScript
+Create proper DTO/interface types shared between frontend/backend
+Implement the React component with TypeScript
+Add proper error handling and loading states
+Ensure responsive design with Tailwind
+Key technical considerations:
+
+Use React Router for navigation
+Implement proper auth flow with JWT
+Set up Docker for code execution
+Add pagination for lists
+Create reusable components
+Add proper TypeScript types throughout
+Would you like to start with a specific feature? For example:
+
+Auth system (login/register)
+Code editor/execution
+Templates listing/creation
+Blog posts
+Comments system
+Let me know which feature you'd like to tackle first and I can help with the TypeScript conversion and frontend implementation.
