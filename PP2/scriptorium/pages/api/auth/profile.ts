@@ -3,7 +3,6 @@ import { verifyUser } from '../../../utils/verify_user';
 import bcrypt from "bcryptjs";
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-
 /**
  * Profile API: Get or update the user's profile
  * Allowed method: GET, PUT
@@ -11,7 +10,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
  * Access: User
  * Payload: None for GET, {firstName, lastName, email, avatar, phone, password} for PUT
  */
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     const user = verifyUser(req);
 
     if (!user) {

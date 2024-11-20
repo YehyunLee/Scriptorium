@@ -10,12 +10,11 @@ export interface AuthTokens {
 
 
 export interface UserProfile {
-    id: number;
     email: string;
     firstName: string;
     lastName: string;
-    phoneNumber?: string;
-    avatarUrl?: string;
+    phoneNumber: string | null;
+    avatarUrl: string | null;
     permission: string;
 }
 
