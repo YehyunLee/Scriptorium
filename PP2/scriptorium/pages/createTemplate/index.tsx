@@ -1,13 +1,16 @@
 import { useState } from "react";
+import { useAuth } from "../contexts/auth_context";
 
 export default function CreateTemplate() {
+  const { isAuthenticated } = useAuth();
+
   const [formData, setFormData] = useState({
     title: "",
     explanation: "",
     tags: "",
     content: "",
   });
-
+  
   const [responseMessage, setResponseMessage] = useState<{
     message: string;
     type: "success" | "error" | null;
@@ -22,27 +25,31 @@ export default function CreateTemplate() {
     e.preventDefault();
     setResponseMessage({ message: "", type: null });
 
-    try {
-      const response = await fetch("/api/code_template/user/create_template", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        setResponseMessage({ message: "Template created successfully!", type: "success" });
-        setFormData({ title: "", explanation: "", tags: "", content: "" }); // Reset form
-      } else {
-        const error = await response.json();
-        setResponseMessage({
-          message: `Error: ${error.message || "Failed to create template"}`,
-          type: "error",
+    if (isAuthenticated) {
+      try {
+        const response = await fetch("/api/code_template/user/create_template", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         });
+
+        if (response.ok) {
+          setResponseMessage({ message: "Template created successfully!", type: "success" });
+          setFormData({ title: "", explanation: "", tags: "", content: "" }); // Reset form
+        } else {
+          const error = await response.json();
+          setResponseMessage({
+            message: `Error: ${error.message || "Failed to create template"}`,
+            type: "error",
+          });
+        }
+      } catch (error: any) {
+        setResponseMessage({ message: `Error: ${error.message}`, type: "error" });
       }
-    } catch (error: any) {
-      setResponseMessage({ message: `Error: ${error.message}`, type: "error" });
+    } else {
+      alert("You must be logged in to create a template")
     }
   };
 
