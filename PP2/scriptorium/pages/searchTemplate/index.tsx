@@ -3,11 +3,31 @@ import { useState } from "react";
 export default function SearchTemplates() {
   const [searchQueryString, setSearchQueryString] = useState<string>("");
   const [templates, setTemplates] = useState<any[]>([{id: "1", title: "Title", explanation: "explanation", tags: "tags", content: "content"}, {id: "2", title: "Title", explanation: "explanation", tags: "tags", content: "content"}]);
+  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(10);
 
   const handleSearch = async () => {
+    setError(null);
 
+    try {
+      const response = await fetch(
+        `/api/code_template/user/search_template?search=${encodeURIComponent(
+          searchQueryString
+        )}&page=${page}&limit=${limit}`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setTemplates(data.templates || []);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Failed to fetch templates");
+      }
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred");
+    } finally {
+    }
   };
 
   const handlePageChange = (newPage: number) => {
@@ -35,6 +55,8 @@ export default function SearchTemplates() {
             Search
           </button>
         </div>
+
+        {error && <p className="text-red-600 text-sm">{error}</p>}
 
         <div>
           {templates.length > 0 ? (
@@ -78,4 +100,5 @@ export default function SearchTemplates() {
     </div>
   );
 };
+
 
