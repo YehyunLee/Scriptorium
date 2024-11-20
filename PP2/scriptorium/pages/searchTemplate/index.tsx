@@ -3,11 +3,13 @@ import { useState } from "react";
 export default function SearchTemplates() {
   const [searchQueryString, setSearchQueryString] = useState<string>("");
   const [templates, setTemplates] = useState<any[]>([{id: "1", title: "Title", explanation: "explanation", tags: "tags", content: "content"}, {id: "2", title: "Title", explanation: "explanation", tags: "tags", content: "content"}]);
+  const [loadingQuery, setLoadingQuery] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(10);
 
   const handleSearch = async () => {
+    setLoadingQuery(true);
     setError(null);
 
     try {
@@ -27,6 +29,7 @@ export default function SearchTemplates() {
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
     } finally {
+      setLoadingQuery(false);
     }
   };
 
@@ -50,9 +53,10 @@ export default function SearchTemplates() {
           />
           <button
             onClick={handleSearch}
+            disabled={loadingQuery}
             className="bg-navy text-white px-4 py-2 rounded-r-md shadow-sm hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-navy"
           >
-            Search
+            {loadingQuery ? "Searching..." : "Search"}
           </button>
         </div>
 
@@ -70,14 +74,14 @@ export default function SearchTemplates() {
               ))}
             </ul>
           ) : (
-            <p className="text-gray-600 text-sm">No templates found</p>
+            !loadingQuery && <p className="text-gray-600 text-sm">No templates found</p>
           )}
         </div>
 
         {templates.length > 0 && (
           <div className="mt-4 flex justify-between">
             <button
-              disabled={page === 1}
+              disabled={loadingQuery || page === 1}
               onClick={() => handlePageChange(page - 1)}
               className={`px-4 py-2 bg-navy rounded-md shadow-sm ${
                 page === 1 ? "cursor-not-allowed opacity-50" : "hover:opacity-80"
@@ -86,7 +90,7 @@ export default function SearchTemplates() {
               Previous
             </button>
             <button
-              disabled={templates.length < limit}
+              disabled={loadingQuery || templates.length < limit}
               onClick={() => handlePageChange(page + 1)}
               className={`px-4 py-2 bg-navy rounded-md shadow-sm ${
                 templates.length < limit ? "cursor-not-allowed opacity-50" : "hover:opacity-80"
@@ -100,5 +104,6 @@ export default function SearchTemplates() {
     </div>
   );
 };
+
 
 
