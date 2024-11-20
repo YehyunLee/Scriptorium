@@ -5,7 +5,7 @@ import { TokenPayload } from '@/types/auth';
 export function verifyUser(req: NextApiRequest): TokenPayload | null {
     try {
         // Try cookie first
-        const tokenFromCookie = req.cookies.accessToken;
+        // const tokenFromCookie = req.cookies.accessToken;
         
         // Fallback to header
         const authHeader = req.headers.authorization;
@@ -13,7 +13,8 @@ export function verifyUser(req: NextApiRequest): TokenPayload | null {
             ? authHeader.split(' ')[1] 
             : null;
 
-        const accessToken = tokenFromCookie || tokenFromHeader;
+        // const accessToken = tokenFromCookie || tokenFromHeader;
+        const accessToken = tokenFromHeader;
 
         if (!accessToken) {
             return null;
