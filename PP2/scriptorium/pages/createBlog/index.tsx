@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useAuth } from "../contexts/auth_context";
 
 export default function CreateBlog() {
+  const { isAuthenticated } = useAuth();
 
   const [formData, setFormData] = useState<any>({
     title: "",
@@ -27,6 +29,34 @@ export default function CreateBlog() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setResponseMessage({ message: "", type: null });
+
+    if (isAuthenticated) {
+        try {
+        const response = await fetch("/api/blog", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+            setResponseMessage({ message: "Blog post created successfully!", type: "success" });
+            setFormData({ title: "", content: "", tags: "", codeTemplateIds: [] }); // Reset form
+        } else {
+            const error = await response.json();
+            setResponseMessage({
+            message: `Error: ${error.message || "Failed to create blog post"}`,
+            type: "error",
+            });
+        }
+        } catch (err: any) {
+            setResponseMessage({ message: `Error: ${err.message}`, type: "error" });
+        } 
+    } else {
+        alert("You must be logged in to create a template")
+    }
   };
 
   return (
