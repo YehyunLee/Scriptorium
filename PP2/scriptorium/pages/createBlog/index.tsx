@@ -16,6 +16,8 @@ export default function CreateBlog() {
     type: "success" | "error" | null;
   }>({ message: "", type: null });
 
+  const [loadingQuery, setLoadingQuery] = useState(false);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -29,6 +31,7 @@ export default function CreateBlog() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoadingQuery(true);
     setResponseMessage({ message: "", type: null });
 
     if (isAuthenticated) {
@@ -52,8 +55,10 @@ export default function CreateBlog() {
             });
         }
         } catch (err: any) {
-            setResponseMessage({ message: `Error: ${err.message}`, type: "error" });
-        } 
+        setResponseMessage({ message: `Error: ${err.message}`, type: "error" });
+        } finally {
+        setLoadingQuery(false);
+        }
     } else {
         alert("You must be logged in to create a template")
     }
@@ -128,9 +133,10 @@ export default function CreateBlog() {
           <div className="mt-6">
             <button
               type="submit"
+              disabled={loadingQuery}
               className="w-full bg-navy text-white py-2 px-4 rounded-md shadow-sm hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2"
             >
-              Create Blog Post
+              {loadingQuery ? "Creating..." : "Create Blog Post"}
             </button>
           </div>
         </form>
