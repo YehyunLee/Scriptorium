@@ -25,7 +25,8 @@ export default function CreateBlog() {
 
   const handleCodeTemplateIdsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    const ids = value.split(",").map((id) => id.trim());
+    let ids = value.split(",").map((id) => id.trim());
+    if (ids.length == 1 && ids[0] == '') { ids = [] }
     setFormData({ ...formData, codeTemplateIds: ids });
   };
 
@@ -36,28 +37,30 @@ export default function CreateBlog() {
 
     if (isAuthenticated) {
         try {
-        const response = await fetch("/api/blog", {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-        });
-
-        if (response.ok) {
-            setResponseMessage({ message: "Blog post created successfully!", type: "success" });
-            setFormData({ title: "", content: "", tags: "", codeTemplateIds: [] }); // Reset form
-        } else {
-            const error = await response.json();
-            setResponseMessage({
-            message: `Error: ${error.message || "Failed to create blog post"}`,
-            type: "error",
+            const token = localStorage.getItem("accessToken")
+            const response = await fetch("/api/blog", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(formData),
             });
-        }
+
+            if (response.ok) {
+                setResponseMessage({ message: "Blog post created successfully!", type: "success" });
+                setFormData({ title: "", content: "", tags: "", codeTemplateIds: [] }); // Reset form
+            } else {
+                const error = await response.json();
+                setResponseMessage({
+                    message: `Error: ${error.message || "Failed to create blog post"}`,
+                    type: "error",
+                });
+            }
         } catch (err: any) {
-        setResponseMessage({ message: `Error: ${err.message}`, type: "error" });
+            setResponseMessage({ message: `Error: ${err.message}`, type: "error" });
         } finally {
-        setLoadingQuery(false);
+            setLoadingQuery(false);
         }
     } else {
         alert("You must be logged in to create a template")
@@ -126,7 +129,7 @@ export default function CreateBlog() {
               name="codeTemplateIds"
               onChange={handleCodeTemplateIdsChange}
               placeholder="e.g., template1, template2"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-navy focus:border-navy sm:text-sm"
+              className="mt-1 text-black block w-full rounded-md border-gray-300 shadow-sm focus:ring-navy focus:border-navy sm:text-sm"
             />
           </div>
           
