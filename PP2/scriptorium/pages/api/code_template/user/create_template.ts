@@ -1,6 +1,6 @@
 import prisma from "../../../../utils/prisma";
 import { verifyUser } from "../../../../utils/verify_user";
-
+import type { NextApiRequest, NextApiResponse } from "next";
 /**
  * Create a new code template
  * Allowed method: POST
@@ -8,7 +8,10 @@ import { verifyUser } from "../../../../utils/verify_user";
  * Access: User
  * Payload: { title, explanation, tags, content? }
  */
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== "POST") {
     res.setHeader("Allow", ["POST"]);
     res.status(405).json({ message: `Method ${req.method} not allowed` });
@@ -38,6 +41,7 @@ export default async function handler(req, res) {
         authorId: decoded.userId,
       },
     });
+
     res
       .status(201)
       .json({ message: "Template saved successfully", template: newTemplate });

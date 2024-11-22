@@ -10,12 +10,12 @@ export interface AuthTokens {
 
 
 export interface UserProfile {
-    id: number;
     email: string;
+    password: string;
     firstName: string;
     lastName: string;
-    phoneNumber?: string;
-    avatarUrl?: string;
+    phoneNumber: string | null;
+    avatarUrl: string | null;
     permission: string;
 }
 
@@ -30,6 +30,12 @@ export interface User {
 export interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
-  login: (token: string) => void;
-  logout: () => void;
+  login: (token: string) => Promise<void>;
+  logout: () => Promise<void>;
+  api: {
+    get: (url: string, options?: RequestInit) => Promise<Response>;
+    post: (url: string, data?: any) => Promise<Response>;
+    put: (url: string, data?: any) => Promise<Response>;
+    delete: (url: string) => Promise<Response>;
+  };
 }
