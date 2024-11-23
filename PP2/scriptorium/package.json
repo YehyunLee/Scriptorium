@@ -12,6 +12,7 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
     "@prisma/client": "^5.21.1",
     "bcryptjs": "^2.4.3",
     "highlight.js": "^11.10.0",
