@@ -1,6 +1,6 @@
 import prisma from '../../../utils/prisma';
 import {verifyUser} from "../../../utils/verify_user";
-
+import type {NextApiRequest, NextApiResponse} from 'next';
 
 /**
  * Blog API: Retrieve blog post with the given ID
@@ -9,7 +9,7 @@ import {verifyUser} from "../../../utils/verify_user";
  * Access: Public (some hidden posts are shown to authors)
  * Payload: None
  */
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'GET') {
         res.status(405).json({message: 'Method is not allowed'});
         return;
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     try {
         // Build the search conditions
         const searchConditions = {
-            id: parseInt(id),
+            id: parseInt(id as string),
             OR: [
                 {
                     hidden: false,
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
         }
 
         res.status(200).json(blogPost);
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({error: 'Internal Server Error', details: error.message});
     }
 }

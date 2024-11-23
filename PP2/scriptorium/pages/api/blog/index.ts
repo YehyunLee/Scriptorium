@@ -1,6 +1,6 @@
 import prisma from '../../../utils/prisma';
 import {verifyUser} from "../../../utils/verify_user";
-
+import type {NextApiRequest, NextApiResponse} from 'next';
 
 /**
  * Blog API: Retrieve blog posts and create new blog posts
@@ -10,13 +10,13 @@ import {verifyUser} from "../../../utils/verify_user";
  * Payload: {search?, template_id?, sort_by_rating?, page?, limit?} for GET
  *         {title, content, tags, codeTemplateIds?} for POST
  */
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
         const {search, template_id, sort_by_rating} = req.query;
         const {page = 1, limit = 10} = req.query;
 
-        const pageNumber = parseInt(page);
-        const pageSize = parseInt(limit);
+        const pageNumber = parseInt(page as string);
+        const pageSize = parseInt(limit as string);
 
         const offset = (pageNumber - 1) * pageSize; // minus 1 because page starts from 1
 
@@ -25,7 +25,16 @@ export default async function handler(req, res) {
         // If search is provided, then search for blog posts based on the search query (blogs key in result)
         // If none of the above conditions are met, then fetch all blog posts (blogs key in result)
 
-        const result = {};
+        const result: {
+            blog_by_rating?: any[],
+            rating_total?: number,
+            blog_by_template?: any[],
+            template_total?: number,
+            blogs?: any[],
+            total?: number,
+            page?: number,
+            limit?: number
+        } = {};
 
         if (sort_by_rating) {
             try {
@@ -85,7 +94,7 @@ export default async function handler(req, res) {
             try {
                 const template = await prisma.codeTemplate.findUnique({
                     where: {
-                        id: parseInt(template_id),
+                        id: parseInt(template_id as string),
                     },
 
                     include: {
@@ -104,13 +113,13 @@ export default async function handler(req, res) {
                     where: {
                         codeTemplates: {
                             some: {
-                                id: parseInt(template_id),
+                                id: parseInt(template_id as string),
                             },
                         },
                     },
                 });
 
-                result.blog_by_template = template.blogPosts;
+                result.blog_by_template = template?.blogPosts;
                 result.template_total = totalBlogPosts;
 
             } catch (error) {
@@ -130,13 +139,13 @@ export default async function handler(req, res) {
                     ],
                     AND: search ? {
                         OR: [
-                            {title: {contains: search}},
-                            {content: {contains: search}},
-                            {tags: {contains: search}},
+                            {title: {contains: search as string}},
+                            {content: {contains: search as string}},
+                            {tags: {contains: search as string}},
                             {
                                 codeTemplates: {
                                     some: {
-                                        title: {contains: search}
+                                        title: {contains: search as string}
                                     }
                                 }
                             }
@@ -172,7 +181,7 @@ export default async function handler(req, res) {
                 result.blogs = blogPosts;
                 result.total = totalBlogPosts;
 
-            } catch (error) {
+            } catch (error: any) {
                 res.status(500).json({error: 'Internal Server Error', details: error.message});
             }
 
@@ -191,6 +200,10 @@ export default async function handler(req, res) {
                 return res.status(400).json({message: 'Missing required fields'});
             }
 
+            if (!user?.userId) {
+                return res.status(401).json({message: 'Unauthorized'});
+            }
+
             const blogPost = await prisma.blogPost.create({
                 data: {
                     title,
@@ -204,7 +217,7 @@ export default async function handler(req, res) {
             });
 
             res.status(201).json(blogPost);
-        } catch (error) {
+        } catch (error: any) {
             res.status(401).json({error: 'Error: Unauthorized', details: error.message});
         }
     } else {

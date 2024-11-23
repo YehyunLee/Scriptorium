@@ -13,10 +13,19 @@ export default function SearchTemplates() {
     setError(null);
 
     try {
+      const token = localStorage.getItem("accessToken");
       const response = await fetch(
         `/api/code_template/user/search_template?search=${encodeURIComponent(
           searchQueryString
-        )}&page=${page}&limit=${limit}`
+        )}&page=${page}&limit=${limit}`,
+        {
+         method: "GET",
+         headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+         }
+        }
+
       );
 
       if (response.ok) {
@@ -25,6 +34,7 @@ export default function SearchTemplates() {
       } else {
         const errorData = await response.json();
         setError(errorData.message || "Failed to fetch templates");
+        console.error(errorData);
       }
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
