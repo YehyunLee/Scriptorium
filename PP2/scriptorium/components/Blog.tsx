@@ -1,15 +1,26 @@
 import React, { useState } from "react";
 
 const Blog = ({ id, title, content, tags, codeTemplateIds, onCloseHandler } : { id: number, title: string, content: string, tags: string, codeTemplateIds: string, onCloseHandler:()=>void }) => {
-    const [comments, setComments] = useState<string[]>([]);
+    const [blogVotes, setBlogVotes] = useState<number>(0);
+    const [comments, setComments] = useState<{ text: string; votes: number }[]>([]);
     const [newComment, setNewComment] = useState<string>("");
   
     const handleAddComment = () => {
       if (newComment.trim() !== "") {
-        setComments([...comments, newComment]);
+        setComments([...comments, { text: newComment, votes: 0 }]);
         setNewComment("");
       }
     };
+
+    const handleVote = (index: number, change: number, isBlog: boolean) => {
+        if (isBlog) {
+            setBlogVotes(blogVotes + change);
+        } else {
+            const updatedComments = [...comments];
+            updatedComments[index].votes += change;
+            setComments(updatedComments);
+        }
+  };
   
     return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
@@ -22,17 +33,38 @@ const Blog = ({ id, title, content, tags, codeTemplateIds, onCloseHandler } : { 
                 &times;
             </button>
         </div>
-        <h2 className="text-2xl font-bold text-gold">{title}</h2>
-        <p className="text-gold/90 mt-2">{content}</p>
-        <div className="mt-4 text-sm text-gold/50">
-          <p>
-            <span className="font-bold">Tags:</span> {tags || "None"}
-          </p>
-          <p>
-            <span className="font-bold">Templates:</span>{" "}
-            {codeTemplateIds || "None"}
-          </p>
+
+        <div className="flex items-center space-x-4">
+            <div className="flex flex-col items-center">
+                <button
+                    onClick={() => handleVote(0, 1, true)}
+                    className="text-gold text-xl hover:text-gold/80 focus:outline-none"
+                >
+                    ▲
+                </button>
+                <span className="text-gold">{blogVotes}</span>
+                <button
+                    onClick={() => handleVote(0, -1, true)}
+                    className="text-gold text-xl hover:text-gold/80 focus:outline-none"
+                >
+                    ▼
+                </button>
+            </div>
+            <div>
+                <h2 className="text-2xl font-bold text-gold">{title}</h2>
+                <p className="text-gold/90 mt-2">{content}</p>
+                <div className="mt-4 text-sm text-gold/50">
+                <p>
+                    <span className="font-bold">Tags:</span> {tags || "None"}
+                </p>
+                <p>
+                    <span className="font-bold">Templates:</span>{" "}
+                    {codeTemplateIds || "None"}
+                </p>
+            </div>
+            </div>
         </div>
+
 
 
         <div className="mt-20">
@@ -42,9 +74,24 @@ const Blog = ({ id, title, content, tags, codeTemplateIds, onCloseHandler } : { 
               comments.map((comment, index) => (
                 <li
                   key={index}
-                  className="bg-navy/80 border border-gold/30 rounded-md p-2 text-gold"
+                  className="bg-navy/80 border border-gold/30 rounded-md p-2 text-gold flex items-center space-x-4"
                 >
-                  {comment}
+                  <div className="flex flex-col items-center">
+                    <button
+                      onClick={() => handleVote(index, 1, false)}
+                      className="text-gold text-xl hover:text-gold/80 focus:outline-none"
+                    >
+                      ▲
+                    </button>
+                    <span className="text-gold">{comment.votes}</span>
+                    <button
+                      onClick={() => handleVote(index, -1, false)}
+                      className="text-gold text-xl hover:text-gold/80 focus:outline-none"
+                    >
+                      ▼
+                    </button>
+                  </div>
+                  <p>{comment.text}</p>
                 </li>
               ))
             ) : (
