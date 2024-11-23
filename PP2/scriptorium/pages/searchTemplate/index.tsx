@@ -39,67 +39,71 @@ export default function SearchTemplates() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-5 flex flex-col items-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">Search Templates</h2>
+    <div className="min-h-screen bg-navy p-12">
+        <div className="max-w-3xl mx-auto px-4">
+            <div className="bg-navy/50 border border-gold/30 rounded-lg shadow-lg p-6">
+                <h2 className="text-2xl font-bold mb-6 text-gold">
+                  Search Templates
+                </h2>
 
-        <div className="mb-4 flex">
-          <input
-            type="text"
-            placeholder="Search templates..."
-            value={searchQueryString}
-            onChange={(e) => setSearchQueryString(e.target.value)}
-            className="w-full text-black rounded-l-md border-gray-300 shadow-sm focus:ring-navy focus:border-navy sm:text-sm px-4 py-2"
-          />
-          <button
-            onClick={handleSearch}
-            disabled={loadingQuery}
-            className="bg-navy text-white px-4 py-2 rounded-r-md shadow-sm hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-navy"
-          >
-            {loadingQuery ? "Searching..." : "Search"}
-          </button>
-        </div>
+                <div className="mb-4 flex">
+                  <input
+                    type="text"
+                    placeholder="Search templates..."
+                    value={searchQueryString}
+                    onChange={(e) => setSearchQueryString(e.target.value)}
+                    className="w-full px-3 py-2 bg-navy border border-gold/30 rounded-md text-white focus:ring-gold focus:border-gold"
+                  />
+                  <button
+                    onClick={handleSearch}
+                    disabled={loadingQuery}
+                    className="bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2"
+                  >
+                    {loadingQuery ? "Searching..." : "Search"}
+                  </button>
+                </div>
 
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+                {error && <p className="text-red-600 text-sm">{error}</p>}
 
-        <div>
-          {templates.length > 0 ? (
-            <ul className="divide-y divide-gray-200">
-              {templates.map((template) => (
-                <li key={template.id} className="p-4 cursor-pointer hover:bg-gray-100">
-                  <h3 className="text-lg font-bold text-gray-800">{template.title}</h3>
-                  <p className="text-sm text-gray-600">{template.explanation}</p>
-                  <div className="text-sm text-gray-500 mt-1">Tags: {template.tags}</div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            !loadingQuery && <p className="text-gray-600 text-sm">No templates found</p>
-          )}
-        </div>
+                <div>
+                  {templates.length > 0 ? (
+                    <ul className="divide-y divide-gold">
+                      {templates.map((template) => (
+                        <li key={template.id} className="p-4 cursor-pointer hover:bg-gray-600">
+                          <h3 className="text-lg font-bold text-gold">{template.title}</h3>
+                          <p className="text-sm text-gold/90">{template.explanation}</p>
+                          <div className="text-sm text-gold/50 mt-1">Tags: {template.tags}</div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    !loadingQuery && <p className="text-gray-600 text-sm">No templates found</p>
+                  )}
+                </div>
 
-        {templates.length > 0 && (
-          <div className="mt-4 flex justify-between">
-            <button
-              disabled={loadingQuery || page === 1}
-              onClick={() => handlePageChange(page - 1)}
-              className={`px-4 py-2 bg-navy rounded-md shadow-sm ${
-                page === 1 ? "cursor-not-allowed opacity-50" : "hover:opacity-80"
-              }`}
-            >
-              Previous
-            </button>
-            <button
-              disabled={loadingQuery || templates.length < limit}
-              onClick={() => handlePageChange(page + 1)}
-              className={`px-4 py-2 bg-navy rounded-md shadow-sm ${
-                templates.length < limit ? "cursor-not-allowed opacity-50" : "hover:opacity-80"
-              }`}
-            >
-              Next
-            </button>
-          </div>
-        )}
+                {templates.length > 0 && (
+                  <div className="mt-4 flex justify-between">
+                    <button
+                      disabled={loadingQuery || page === 1}
+                      onClick={() => handlePageChange(page - 1)}
+                      className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 ${
+                        page === 1 ? "cursor-not-allowed opacity-50" : "hover:opacity-80"
+                      }`}
+                    >
+                      Previous
+                    </button>
+                    <button
+                      disabled={loadingQuery || templates.length < limit}
+                      onClick={() => handlePageChange(page + 1)}
+                      className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 ${
+                        templates.length < limit ? "cursor-not-allowed opacity-50" : "hover:opacity-80"
+                      }`}
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
+              </div>
       </div>
     </div>
   );
