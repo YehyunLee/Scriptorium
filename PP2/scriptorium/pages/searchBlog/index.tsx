@@ -1,3 +1,4 @@
+import Blog from "@/components/Blog";
 import { useState } from "react";
 
 export default function SearchBlogs() {
@@ -7,6 +8,7 @@ export default function SearchBlogs() {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(10);
+  const [selectedBlog, setSelectedBlog] = useState<any>(null)
 
   const handleSearch = async () => {
     setLoadingQuery(true);
@@ -74,7 +76,7 @@ export default function SearchBlogs() {
                   {blogs.length > 0 ? (
                     <ul className="divide-y divide-gold">
                       {blogs.map((blog) => (
-                        <li key={blog.id} className="p-4 cursor-pointer hover:bg-gray-600">
+                        <li key={blog.id} className="p-4 cursor-pointer hover:bg-gray-600" onClick={()=>setSelectedBlog({id: blog.id, title: blog.title, content: blog.content, tags: blog.tags, codeTemplateIds: blog.codeTemplateIds})}>
                           <h3 className="text-lg font-bold text-gold">{blog.title}</h3>
                           <p className="text-sm text-gold/90">{blog.content}</p>
                           <div className="text-sm text-gold/50 mt-1">Tags: {blog.tags}</div>
@@ -86,6 +88,9 @@ export default function SearchBlogs() {
                     !loadingQuery && <p className="text-gray-600 text-sm">No blogs found</p>
                   )}
                 </div>
+
+                {(selectedBlog) && <Blog id={selectedBlog.id} title={selectedBlog.title} content={selectedBlog.content} tags={selectedBlog.tags} codeTemplateIds={selectedBlog.codeTemplateIds} onCloseHandler={()=>setSelectedBlog(null)}></Blog>}
+                
 
                 {blogs.length > 0 && (
                   <div className="mt-4 flex justify-between">
