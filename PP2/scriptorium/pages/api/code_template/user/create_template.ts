@@ -36,7 +36,7 @@ export default async function handler(
       data: {
         title,
         explanation,
-        tags: tags.join(","), // Convert array to comma-separated string
+        tags: tags.join(", "), // Convert array to comma-separated string
         content,
         authorId: decoded.userId,
       },
