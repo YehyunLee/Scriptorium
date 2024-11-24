@@ -111,108 +111,163 @@ else
 fi
 # ########################################################################################
 
+ins_docker="false"
+ins_docker_compose="false"
 
+# check if docker is installed
+if ! command -v docker &> /dev/null; then
+  echo "Docker is not installed."
+  ins_docker="true"
+else
+  echo "Docker is already installed."
+fi
 
+# check if docker-compose is installed
+if ! command -v docker-compose &> /dev/null; then
+  echo "Docker Compose is not installed."
+  ins_docker_compose="true"
+  else
+  echo "Docker Compose is already installed."
+fi
 
-# For these functions, I worked manually with github copilot autocomplete
-# Function to install Python
-function install_python {
-  echo "Installing Python..."
+# install docker and docker-compose if not installed
+if [ "$ins_docker" == "true" ] || [ "$ins_docker_compose" == "true" ]; then
+  echo "Installing Docker and Docker Compose..."
   if [ "$OS" == "linux" ]; then
+    # For Linux, install Docker and Docker Compose
     sudo apt-get update
-    sudo apt-get install -y python3 python3-pip || { echo "Failed to install Python."; exit 1; }
+    sudo apt-get install -y docker.io docker-compose || { echo "Failed to install Docker and Docker Compose."; exit 1; }
+    sudo usermod -aG docker $USER
+    newgrp docker
   elif [ "$OS" == "macos" ]; then
-    brew install python || { echo "Failed to install Python via Homebrew."; exit 1; }
+    # For macOS, install Docker Desktop
+    echo "Please download Docker Desktop from https://www.docker.com/products/docker-desktop and install it."
+    echo "Docker Compose is included in Docker Desktop."
+    echo "After installation, you may need to start Docker Desktop manually."
+    exit 1
   elif [ "$OS" == "windows" ]; then
-    echo "Please download Python from https://www.python.org/downloads/windows/ and install it."
-    echo "Alternatively, you can install it via Chocolatey:"
-    echo "choco install python -y"
+    # For Windows, install Docker Desktop
+    echo "Please download Docker Desktop from https://www.docker.com/products/docker-desktop and install it."
+    echo "Docker Compose is included in Docker Desktop."
+    echo "After installation, you may need to start Docker Desktop manually."
     exit 1
   else
     echo "Unsupported Operating System."
     exit 1
   fi
-  echo "Python installed successfully."
-}
-
-# Function to install Java
-function install_java {
-  echo "Installing Java JDK..."
-  if [ "$OS" == "linux" ]; then
-    sudo apt-get update
-    sudo apt-get install -y default-jdk || { echo "Failed to install Java."; exit 1; }
-  elif [ "$OS" == "macos" ]; then
-    brew install openjdk || { echo "Failed to install Java via Homebrew."; exit 1; }
-    sudo ln -sfn $(brew --prefix openjdk)/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
-  elif [ "$OS" == "windows" ]; then
-    echo "Please download Java JDK from https://www.oracle.com/java/technologies/javase-jdk11-downloads.html and install it."
-    echo "Alternatively, you can install it via Chocolatey:"
-    echo "choco install openjdk -y"
-    exit 1
-  else
-    echo "Unsupported Operating System."
-    exit 1
-  fi
-  echo "Java JDK installed successfully."
-}
-
-# Function to install GCC (C and C++ Compiler)
-function install_gcc {
-  echo "Installing GCC (C and C++ Compiler)..."
-  if [ "$OS" == "linux" ]; then
-    sudo apt-get update
-    sudo apt-get install -y build-essential || { echo "Failed to install GCC."; exit 1; }
-  elif [ "$OS" == "macos" ]; then
-    if ! xcode-select -p &> /dev/null; then
-      echo "Installing Xcode Command Line Tools..."
-      xcode-select --install || { echo "Failed to install Xcode Command Line Tools."; exit 1; }
-    fi
-  elif [ "$OS" == "windows" ]; then
-    echo "Please install MinGW or Visual Studio Build Tools manually."
-    echo "Alternatively, you can install MinGW via Chocolatey:"
-    echo "choco install mingw -y"
-    exit 1
-  else
-    echo "Unsupported Operating System."
-    exit 1
-  fi
-  echo "GCC installed successfully."
-}
-
-# Check and Install Python
-if ! command -v python3 &> /dev/null; then
-  echo "Python is not installed."
-  install_python
-else
-  PYTHON_VERSION=$(python3 -V 2>&1 | awk '{print $2}')
-  REQUIRED_PYTHON_VERSION="3.6.0"
-  function version_ge {
-    [ "$(printf '%s\n' "$2" "$1" | sort -V | head -n1)" == "$2" ]
-  }
-  if version_ge "$PYTHON_VERSION" "$REQUIRED_PYTHON_VERSION"; then
-    echo "Python version $PYTHON_VERSION is sufficient."
-  else
-    echo "Python version $PYTHON_VERSION is below the required $REQUIRED_PYTHON_VERSION."
-    echo "Upgrading Python..."
-    install_python
-  fi
+  echo "Docker and Docker Compose installed successfully."
 fi
 
-# Check and Install Java
-if ! command -v java &> /dev/null; then
-  echo "Java is not installed."
-  install_java
-else
-  echo "Java is already installed."
-fi
+echo "Starting Docker..."
+sudo systemctl start docker || { echo "Failed to start Docker."; exit 1; }
+echo "Docker started successfully."
 
-# Check and Install GCC (C and C++)
-if ! command -v gcc &> /dev/null || ! command -v g++ &> /dev/null; then
-  echo "GCC is not installed."
-  install_gcc
-else
-  echo "GCC is already installed."
-fi
+# Run docker setup script
+echo "Running Docker setup script..."
+cd ./utils/code_executor/scripts
+./setup.sh || { echo "Failed to run Docker setup script."; exit 1; }
+
+
+#
+## For these functions, I worked manually with github copilot autocomplete
+## Function to install Python
+#function install_python {
+#  echo "Installing Python..."
+#  if [ "$OS" == "linux" ]; then
+#    sudo apt-get update
+#    sudo apt-get install -y python3 python3-pip || { echo "Failed to install Python."; exit 1; }
+#  elif [ "$OS" == "macos" ]; then
+#    brew install python || { echo "Failed to install Python via Homebrew."; exit 1; }
+#  elif [ "$OS" == "windows" ]; then
+#    echo "Please download Python from https://www.python.org/downloads/windows/ and install it."
+#    echo "Alternatively, you can install it via Chocolatey:"
+#    echo "choco install python -y"
+#    exit 1
+#  else
+#    echo "Unsupported Operating System."
+#    exit 1
+#  fi
+#  echo "Python installed successfully."
+#}
+#
+## Function to install Java
+#function install_java {
+#  echo "Installing Java JDK..."
+#  if [ "$OS" == "linux" ]; then
+#    sudo apt-get update
+#    sudo apt-get install -y default-jdk || { echo "Failed to install Java."; exit 1; }
+#  elif [ "$OS" == "macos" ]; then
+#    brew install openjdk || { echo "Failed to install Java via Homebrew."; exit 1; }
+#    sudo ln -sfn $(brew --prefix openjdk)/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
+#  elif [ "$OS" == "windows" ]; then
+#    echo "Please download Java JDK from https://www.oracle.com/java/technologies/javase-jdk11-downloads.html and install it."
+#    echo "Alternatively, you can install it via Chocolatey:"
+#    echo "choco install openjdk -y"
+#    exit 1
+#  else
+#    echo "Unsupported Operating System."
+#    exit 1
+#  fi
+#  echo "Java JDK installed successfully."
+#}
+#
+## Function to install GCC (C and C++ Compiler)
+#function install_gcc {
+#  echo "Installing GCC (C and C++ Compiler)..."
+#  if [ "$OS" == "linux" ]; then
+#    sudo apt-get update
+#    sudo apt-get install -y build-essential || { echo "Failed to install GCC."; exit 1; }
+#  elif [ "$OS" == "macos" ]; then
+#    if ! xcode-select -p &> /dev/null; then
+#      echo "Installing Xcode Command Line Tools..."
+#      xcode-select --install || { echo "Failed to install Xcode Command Line Tools."; exit 1; }
+#    fi
+#  elif [ "$OS" == "windows" ]; then
+#    echo "Please install MinGW or Visual Studio Build Tools manually."
+#    echo "Alternatively, you can install MinGW via Chocolatey:"
+#    echo "choco install mingw -y"
+#    exit 1
+#  else
+#    echo "Unsupported Operating System."
+#    exit 1
+#  fi
+#  echo "GCC installed successfully."
+#}
+#
+## Check and Install Python
+#if ! command -v python3 &> /dev/null; then
+#  echo "Python is not installed."
+#  install_python
+#else
+#  PYTHON_VERSION=$(python3 -V 2>&1 | awk '{print $2}')
+#  REQUIRED_PYTHON_VERSION="3.6.0"
+#  function version_ge {
+#    [ "$(printf '%s\n' "$2" "$1" | sort -V | head -n1)" == "$2" ]
+#  }
+#  if version_ge "$PYTHON_VERSION" "$REQUIRED_PYTHON_VERSION"; then
+#    echo "Python version $PYTHON_VERSION is sufficient."
+#  else
+#    echo "Python version $PYTHON_VERSION is below the required $REQUIRED_PYTHON_VERSION."
+#    echo "Upgrading Python..."
+#    install_python
+#  fi
+#fi
+#
+## Check and Install Java
+#if ! command -v java &> /dev/null; then
+#  echo "Java is not installed."
+#  install_java
+#else
+#  echo "Java is already installed."
+#fi
+#
+## Check and Install GCC (C and C++)
+#if ! command -v gcc &> /dev/null || ! command -v g++ &> /dev/null; then
+#  echo "GCC is not installed."
+#  install_gcc
+#else
+#  echo "GCC is already installed."
+#fi
 
 
 
