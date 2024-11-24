@@ -5,7 +5,7 @@ import prisma from '../../../../utils/prisma';
 /**
  * Blog Rating API: Rate a blog post
  * Allowed method: POST
- * Url: /api/blog/[id]/rate
+ * Url: /api/blog/[id]/add_rate
  * Access: User
  * Payload: {ratingValue}
  */

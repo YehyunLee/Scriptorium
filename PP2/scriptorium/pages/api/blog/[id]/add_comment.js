@@ -5,7 +5,7 @@ import {verifyUser} from "../../../../utils/verify_user";
 /**
  * Blog Comment API: Create a new comment or reply
  * Allowed method: POST
- * Url: /api/blog/[id]/comment
+ * Url: /api/blog/[id]/add_comment
  * Access: User
  * Payload: {content, parentCommentId}
  */
