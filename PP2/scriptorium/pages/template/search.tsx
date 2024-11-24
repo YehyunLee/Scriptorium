@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import type { Template } from '@/types/general';
-
-const parseTags = (tags: string): string[] => {
-  return tags ? tags.split(',').map(tag => tag.trim()) : [];
-};
+import { parseTags } from '@/utils/helpers';
 
 export default function SearchTemplates() {
   const [templates, setTemplates] = useState<Template[]>([]);
