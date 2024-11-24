@@ -1,4 +1,5 @@
 import prisma from "../../../../utils/prisma";
+import { NextApiRequest, NextApiResponse } from "next";
 
 /**
  * Fetches the templates created
@@ -7,16 +8,19 @@ import prisma from "../../../../utils/prisma";
  * Access: Public
  * Payload: { search: string, page?: number, limit?: number }
  */
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
     res.setHeader("Allow", ["GET"]);
     res.status(405).json({ message: `Method ${req.method} not allowed` });
     return;
   }
 
-  const { search, page = 1, limit = 10 } = req.query;
-  const pageNumber = parseInt(page, 10);
-  const pageSize = parseInt(limit, 10);
+  let { search, page = 1, limit = 10 } = req.query;
+  if (Array.isArray(search)) {
+    search = search.join(" ");
+  }
+  const pageNumber = parseInt(page as string , 10);
+  const pageSize = parseInt(limit as string, 10);
   const skip = (pageNumber - 1) * pageSize;
 
   try {
