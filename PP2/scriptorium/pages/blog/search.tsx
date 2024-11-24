@@ -1,5 +1,5 @@
 import Blog from "@/components/Blog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function SearchBlogs() {
   const [searchQueryString, setSearchQueryString] = useState<string>("");
@@ -39,6 +39,14 @@ export default function SearchBlogs() {
         setLoadingQuery(false);
     }
   };
+
+
+// call the handleSearch function for the initial load
+useEffect( () => {
+  handleSearch();
+}, []);
+// use effect with [] as second argument to call the handleSearch function only once when the component is mounted
+// useEffect with variables as second argument to call the handleSearch function whenever the searchQueryString or page changes
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
