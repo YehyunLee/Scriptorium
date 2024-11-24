@@ -116,7 +116,7 @@ export default function Signup() {
 
           <div className="text-center">
             <Link href="/login" className="text-gold hover:text-gold/80">
-              Already have an account? Sign in
+              Already have an account? Log in
             </Link>
           </div>
         </form>
