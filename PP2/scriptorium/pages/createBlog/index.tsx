@@ -50,7 +50,7 @@ export default function CreateBlog() {
                 body: JSON.stringify({
                     ...formData,
                     // tags must be one string. not an array
-                    tags: tags.join(","), 
+                    tags: tags.join(", "), 
                     codeTemplateIds: formData.codeTemplateIds
                 }),
             });

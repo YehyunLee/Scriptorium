@@ -43,7 +43,7 @@ export default async function handler(req, res) {
       data: {
         title,
         explanation: explanation || originalTemplate.explanation,
-        tags: tags.join(","), // Convert array to comma-separated string
+        tags: tags.join(", "), // Convert array to comma-separated string
         content,
         authorId: decoded.userId,
         forkedFromId: originalTemplate.id, // original template fork lists will be updated automatically
