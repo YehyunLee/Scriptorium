@@ -1,63 +1,62 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { useAuth } from '../pages/contexts/auth_context';
-import Link from 'next/link';
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { useAuth } from "../pages/contexts/auth_context";
+import Link from "next/link";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    phone: '',
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
-     e.preventDefault();
-      setError('');
+    e.preventDefault();
+    setError("");
 
     try {
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       const data = await res.json();
 
-       if (!res.ok) {
-        throw new Error(data.error || 'Signup failed');
+      if (!res.ok) {
+        throw new Error(data.error || "Signup failed");
       }
 
       login(data.accessToken);
-      router.push('/');
+      router.push("/");
     } catch (err: any) {
       setError(err.message);
     }
   };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData(prev => ({
-        ...prev,
-        [e.target.name]: e.target.value,
-      }))
-    };
-// ...prev does a shallow copy of the previous state and then updates the value of the input field that was changed.
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+  // ...prev does a shallow copy of the previous state and then updates the value of the input field that was changed.
 
-    return (
-
-<div className="min-h-screen flex items-center justify-center bg-navy">
+  return (
+    <div className="flex justify-center pt-12 bg-navy">
       <div className="max-w-md w-full space-y-8 p-8 bg-navy/50 rounded-lg border border-gold/30">
         <div>
-          <h2 className="text-center text-3xl font-extrabold text-gold">Create your account</h2>
+          <h2 className="text-center text-3xl font-extrabold text-gold">
+            Create your account
+          </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="text-red-500 text-center">{error}</div>
-          )}
+          {error && <div className="text-red-500 text-center">{error}</div>}
           <div className="rounded-md shadow-sm -space-y-px">
             <input
               name="firstName"
@@ -123,6 +122,4 @@ export default function Signup() {
       </div>
     </div>
   );
-
-
-} 
+}

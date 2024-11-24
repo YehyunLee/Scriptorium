@@ -7,7 +7,9 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
       <NavBar />
-      <Component {...pageProps} />
+      <main className="pt-16">
+        <Component {...pageProps} />
+      </main>
     </AuthProvider>
   );
 }
