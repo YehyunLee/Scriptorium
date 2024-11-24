@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/auth_context";
+import { TagInput } from "../../components/TagInput";
 
 export default function CreateBlog() {
   const { isAuthenticated } = useAuth();
@@ -7,9 +8,11 @@ export default function CreateBlog() {
   const [formData, setFormData] = useState<any>({
     title: "",
     content: "",
-    tags: "",
     codeTemplateIds: [],
   });
+  
+  // Separate tags state
+  const [tags, setTags] = useState<string[]>([]);
   
   const [responseMessage, setResponseMessage] = useState<{
     message: string;
@@ -44,12 +47,18 @@ export default function CreateBlog() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    ...formData,
+                    // tags must be one string. not an array
+                    tags: tags.join(","), 
+                    codeTemplateIds: formData.codeTemplateIds
+                }),
             });
 
             if (response.ok) {
                 setResponseMessage({ message: "Blog post created successfully!", type: "success" });
-                setFormData({ title: "", content: "", tags: "", codeTemplateIds: [] }); // Reset form
+                setFormData({ title: "", content: "", codeTemplateIds: [] });
+                setTags([]); // Reset tags
             } else {
                 const error = await response.json();
                 setResponseMessage({
@@ -107,17 +116,12 @@ export default function CreateBlog() {
                     </div>
 
                     <div className="mb-4">
-                        <label htmlFor="tags" className="block text-sm font-medium text-gold mb-1">
+                        <label className="block text-sm font-medium text-gold mb-1">
                             Tags
                         </label>
-                        <input
-                            type="text"
-                            id="tags"
-                            name="tags"
-                            value={formData.tags}
-                            onChange={handleInputChange}
-                            placeholder="e.g., JavaScript, Python, C"
-                            className="w-full px-3 py-2 bg-navy border border-gold/30 rounded-md text-white focus:ring-gold focus:border-gold"
+                        <TagInput
+                            tags={tags}
+                            onTagsChange={setTags}
                         />
                     </div>
                     
@@ -159,4 +163,4 @@ export default function CreateBlog() {
         </div>
     </div>
   );
-};
+}
