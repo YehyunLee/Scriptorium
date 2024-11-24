@@ -52,7 +52,12 @@ export default async function handler(req, res) {
         }
         averageRate = averageRate / totalRates;
 
-        res.status(200).json({totalRates, averageRate});
+        let usersWhoRatedIds = []
+        for (const rating of comment.ratings) {
+            usersWhoRatedIds.push({[rating.userId]: rating.rating})
+        }
+
+        res.status(200).json({totalRates, averageRate, usersWhoRatedIds});
     } catch (error) {
         res.status(500).json({error: 'Internal Server Error', details: error.message});
     }

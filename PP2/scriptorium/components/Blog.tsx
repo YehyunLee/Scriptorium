@@ -2,7 +2,7 @@ import { useAuth } from "@/pages/contexts/auth_context";
 import React, { useEffect, useState } from "react";
 
 const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id: number, title: string, content: string, tags: string, codeTemplates: string, onCloseHandler:()=>void }) => {
-    const { isAuthenticated } = useAuth();
+    const { user, isAuthenticated } = useAuth();
     
     const [authToken, setAuthToken] = useState<string | null>(null)
     const [blogVotes, setBlogVotes] = useState<number>(0);
@@ -12,6 +12,8 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
     const [commentsLimit] = useState<number>(10);
     const [loadingComments, setLoadingComments] = useState<boolean>(false);
     const [commentsError, setCommentsError] = useState<string | null>(null);
+    const [blogRating, setBlogRating] = useState<number>(0);
+    const [currentUserCommentRatings, setCurrentUserCommentRatings] = useState<any>({});
 
     useEffect(() => {
         setAuthToken(localStorage.getItem("accessToken"))
@@ -33,6 +35,16 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
             if (response.ok) {
                 const data = await response.json();
                 setBlogVotes(data.averageRate || 0);
+
+                if (user) {
+                    let currentUserRating = data.usersWhoRatedIds.find((userRatingPair: any) => userRatingPair.hasOwnProperty(user.id))
+
+                    if (currentUserRating) {
+                        if (currentUserRating[user.id] !== 0) {
+                            setBlogRating(currentUserRating[user.id])
+                        }
+                    }
+                }
             }
         } catch (err: any) {
             console.log("error getting blog rates")
@@ -90,6 +102,19 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
     
             if (response.ok) {
                 const data = await response.json();
+
+                let currentUserRating = data.usersWhoRatedIds.find((userRatingPair: any) => userRatingPair.hasOwnProperty(5))
+
+                if (currentUserRating) {
+                    if (user) {
+                        if (currentUserRating[user.id] !== 0) {
+                            let newCommentRatings = currentUserCommentRatings
+                            newCommentRatings[commentId] = currentUserRating[user.id]
+                            setCurrentUserCommentRatings(newCommentRatings)
+                        }
+                    }
+                }
+
                 return data.averageRate
             } else {
                 console.log("error getting comment rating")
@@ -130,6 +155,38 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
     };
 
     const handleVote = async (index: number, change: number, isBlog: boolean) => {
+
+        let actualChange = change
+        let currentCommentRating = 0
+        let newCommentRatings = currentUserCommentRatings
+
+        if (isBlog) {
+            currentCommentRating = blogRating
+        } else {
+            let commentId = comments[index].id
+            
+            //if this comment hasnt been rated, set it to no rating (0)
+            if (!newCommentRatings[commentId]) {
+                newCommentRatings[commentId] = 0
+            }
+
+            currentCommentRating = newCommentRatings[commentId]
+        }
+
+        //if clicking arrow second time, remove rating
+        if ((currentCommentRating == 1 && change == 1) || (currentCommentRating == -1 && change == -1)) {
+            actualChange = 0
+        }
+
+        let netChange = (actualChange == 0 ? -change: change)
+
+        //edge cases when clicking opposite arrow of selected arrow
+        if (currentCommentRating == 1 && change == -1) {
+            netChange = -2
+        } else if (currentCommentRating == -1 && change == 1) {
+            netChange = 2
+        }
+
         if (isBlog) {
             try {
                 const response = await fetch(`/api/blog/${id}/add_rate`, {
@@ -138,11 +195,12 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${authToken}`
                     },
-                    body: JSON.stringify({ ratingValue: change }),
+                    body: JSON.stringify({ ratingValue: actualChange }),
                 });
             
                 if (response.ok) {
-                    setBlogVotes(blogVotes + change);
+                    setBlogVotes(blogVotes + netChange);
+                    setBlogRating(actualChange)
                 } else {
                     console.error("Failed to rate the comment:", await response.json());
                 }
@@ -161,12 +219,14 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${authToken}`
                     },
-                    body: JSON.stringify({ ratingValue: change }),
+                    body: JSON.stringify({ ratingValue: actualChange }),
                 });
             
                 if (response.ok) {
-                    updatedComments[index].averageRate += change;
+                    updatedComments[index].averageRate += netChange;
                     setComments(updatedComments);
+                    newCommentRatings[commentId] = actualChange
+                    setCurrentUserCommentRatings(newCommentRatings)
                 } else {
                     console.error("Failed to rate the comment:", await response.json());
                     return false;
@@ -194,14 +254,14 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
                     <div className="flex flex-col items-center">
                         <button
                             onClick={() => handleVote(0, 1, true)}
-                            className="text-gold text-xl hover:text-gold/80 focus:outline-none"
+                            className={((blogRating == 1) ? "text-gold hover:text-gold/80" : "text-white hover:opacity-80") + " text-xl hover:text-gold/80 focus:outline-none"}
                         >
                             ▲
                         </button>
-                        <span className="text-gold">{blogVotes}</span>
+                        <span className="text-gold">{blogVotes || 0}</span>
                         <button
                             onClick={() => handleVote(0, -1, true)}
-                            className="text-gold text-xl hover:text-gold/80 focus:outline-none"
+                            className={((blogRating == -1) ? "text-gold hover:text-gold/80" : "text-white hover:opacity-80") + " text-xl hover:text-gold/80 focus:outline-none"}
                         >
                             ▼
                         </button>
@@ -233,14 +293,14 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
                                 <div className="flex flex-col items-center">
                                     <button
                                         onClick={() => handleVote(index, 1, false)}
-                                        className="text-gold text-xl hover:text-gold/80 focus:outline-none"
+                                        className={((currentUserCommentRatings[comment.id] && currentUserCommentRatings[comment.id] == 1) ? "text-gold hover:text-gold/80" : "text-white hover:opacity-80") + " text-xl hover:text-gold/80 focus:outline-none"}
                                     >
                                         ▲
                                     </button>
-                                    <span className="text-gold">{comment.averageRate}</span>
+                                    <span className="text-gold">{comment.averageRate || 0}</span>
                                     <button
                                         onClick={() => handleVote(index, -1, false)}
-                                        className="text-gold text-xl hover:text-gold/80 focus:outline-none"
+                                        className={((currentUserCommentRatings[comment.id] && currentUserCommentRatings[comment.id] == -1) ? "text-gold hover:text-gold/80" : "text-white hover:opacity-80") + " text-xl hover:text-gold/80 focus:outline-none"}
                                     >
                                         ▼
                                     </button>
