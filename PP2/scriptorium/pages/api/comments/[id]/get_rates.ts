@@ -1,14 +1,15 @@
 import prisma from '../../../../utils/prisma';
 import {verifyUser} from "../../../../utils/verify_user";
+import type {NextApiRequest, NextApiResponse} from 'next';
 
 /**
- * Blog API: Retrieve average and total number of rates for a blog post
+ * Comment API: Retrieve average and total number of rates for a comment
  * Allowed method: GET
- * Url: /api/blog/[id]/get_rates
+ * Url: /api/comments/[id]/get_rates
  * Access: Public (some hidden posts are shown to authors)
  * Payload: None
  */
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'GET') {
         res.status(405).json({message: 'Method is not allowed'});
         return;
@@ -21,7 +22,7 @@ export default async function handler(req, res) {
     try {
         // Build the search conditions
         const searchConditions = {
-            id: parseInt(id),
+            id: parseInt(id as string),
             OR: [
                 {
                     hidden: false,
@@ -32,34 +33,33 @@ export default async function handler(req, res) {
             ],
         };
 
-        // Retrieve blog post with the search conditions
-        const blogPost = await prisma.blogPost.findFirst({
+        // Retrieve comment with the search conditions
+        const comment = await prisma.comment.findFirst({
             where: searchConditions,
             include: {
                 ratings: true
             }
         });
 
-        if (!blogPost) {
-            res.status(404).json({message: 'Blog post not found'});
+        if (!comment) {
+            res.status(404).json({message: 'Comment not found'});
             return;
         }
 
-
-        const totalRates = blogPost.ratings.length;
+        const totalRates = comment.ratings.length;
         let averageRate = 0
         for (let i = 0; i < totalRates; i++) {
-            averageRate += blogPost.ratings[i].rating;
+            averageRate += comment.ratings[i].rating;
         }
         averageRate = averageRate / totalRates;
 
         let usersWhoRatedIds = []
-        for (const rating of blogPost.ratings) {
+        for (const rating of comment.ratings) {
             usersWhoRatedIds.push({[rating.userId]: rating.rating})
         }
 
         res.status(200).json({totalRates, averageRate, usersWhoRatedIds});
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({error: 'Internal Server Error', details: error.message});
     }
 }
