@@ -4,7 +4,7 @@ import {verifyUser} from "../../../../utils/verify_user";
 /**
  * Comment API: Retrieve average and total number of rates for a comment
  * Allowed method: GET
- * Url: /api/blog/[id]/get_rates
+ * Url: /api/comments/[id]/get_rates
  * Access: Public (some hidden posts are shown to authors)
  * Payload: None
  */

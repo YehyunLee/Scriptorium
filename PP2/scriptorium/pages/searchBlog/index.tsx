@@ -76,11 +76,11 @@ export default function SearchBlogs() {
                   {blogs.length > 0 ? (
                     <ul className="divide-y divide-gold">
                       {blogs.map((blog) => (
-                        <li key={blog.id} className="p-4 cursor-pointer hover:bg-gray-600" onClick={()=>setSelectedBlog({id: blog.id, title: blog.title, content: blog.content, tags: blog.tags, codeTemplateIds: blog.codeTemplateIds})}>
+                        <li key={blog.id} className="p-4 cursor-pointer hover:bg-gray-600" onClick={()=>setSelectedBlog({id: blog.id, title: blog.title, content: blog.content, tags: blog.tags, codeTemplates: blog.codeTemplates})}>
                           <h3 className="text-lg font-bold text-gold">{blog.title}</h3>
                           <p className="text-sm text-gold/90">{blog.content}</p>
                           <div className="text-sm text-gold/50 mt-1">Tags: {blog.tags}</div>
-                          <div className="text-sm text-gold/50 mt-1">Templates: {blog.codeTemplateIds}</div>
+                          <div className="text-sm text-gold/50 mt-1">Templates: {(blog.codeTemplates.length == 0) ? "None" : blog.codeTemplates}</div>
                         </li>
                       ))}
                     </ul>
@@ -89,7 +89,7 @@ export default function SearchBlogs() {
                   )}
                 </div>
 
-                {(selectedBlog) && <Blog id={selectedBlog.id} title={selectedBlog.title} content={selectedBlog.content} tags={selectedBlog.tags} codeTemplateIds={selectedBlog.codeTemplateIds} onCloseHandler={()=>setSelectedBlog(null)}></Blog>}
+                {(selectedBlog) && <Blog id={selectedBlog.id} title={selectedBlog.title} content={selectedBlog.content} tags={selectedBlog.tags} codeTemplates={selectedBlog.codeTemplates} onCloseHandler={()=>setSelectedBlog(null)}></Blog>}
                 
 
                 {blogs.length > 0 && (

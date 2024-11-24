@@ -4,7 +4,7 @@ import {verifyUser} from "../../../../utils/verify_user";
 /**
  * Blog API: Retrieve list of all comments for a blog post
  * Allowed method: GET
- * Url: /api/blog/[id]/get_rates
+ * Url: /api/blog/[id]/get_comments
  * Access: Public (some hidden posts are shown to authors)
  * Payload: {page?, limit?}
  */
@@ -47,6 +47,7 @@ export default async function handler(req, res) {
             include: {
                 comments: {
                     select: {
+                        id: true,
                         content: true,
                         author: {
                             select: {
