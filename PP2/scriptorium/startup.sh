@@ -159,14 +159,15 @@ if [ "$ins_docker" == "true" ] || [ "$ins_docker_compose" == "true" ]; then
 fi
 
 echo "Starting Docker..."
-sudo systemctl start docker || { echo "Failed to start Docker."; exit 1; }
+sudo systemctl start docker || { echo "Failed to start Docker."; }
 echo "Docker started successfully."
 
 # Run docker setup script
 echo "Running Docker setup script..."
 cd ./utils/code_executor/scripts
 ./setup.sh || { echo "Failed to run Docker setup script."; exit 1; }
-
+# Go back to root directory
+cd ../../../
 
 #
 ## For these functions, I worked manually with github copilot autocomplete
