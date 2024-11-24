@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/auth_context";
 import { TagInput } from "../../components/TagInput";
+import { useSearchParams } from "next/navigation";
 
-export default function CreateBlog() {
+export default function EditBlog() {
   const { isAuthenticated } = useAuth();
+  let searchParams = useSearchParams()
+
+  let blogId = searchParams.get("blogId") ?? ""
 
   const [formData, setFormData] = useState<any>({
     title: "",
     content: "",
     codeTemplateIds: [],
   });
+
   
   // Separate tags state
   const [tags, setTags] = useState<string[]>([]);
@@ -20,6 +25,44 @@ export default function CreateBlog() {
   }>({ message: "", type: null });
 
   const [loadingQuery, setLoadingQuery] = useState(false);
+
+  useEffect(() => {
+    if (blogId) {
+      getBlogInformation();
+    }
+  }, [blogId]);
+
+  const getBlogInformation = async () => {
+    if (blogId) {
+        try {
+            const response = await fetch(
+                `/api/blog/${blogId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setFormData({ title: data.title, content: data.content, codeTemplateIds: data.codeTemplateIds });
+                let tags = data.tags.split(",").map((tag: string) => tag.trim());
+                setTags(tags)
+            } else {
+                const errorData = await response.json();
+                setResponseMessage({
+                    message: `Error: ${errorData.message || "Failed to get blog post"}`,
+                    type: "error",
+                });
+            }
+        } catch (err: any) {
+            setResponseMessage({ message: `Error: ${err.message}`, type: "error" });
+        }
+    } else {
+        alert("The blog selected is invalid")
+    }
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -38,11 +81,11 @@ export default function CreateBlog() {
     setLoadingQuery(true);
     setResponseMessage({ message: "", type: null });
 
-    if (isAuthenticated) {
+    if (isAuthenticated && blogId != "") {
         try {
             const token = localStorage.getItem("accessToken")
-            const response = await fetch("/api/blog", {
-                method: "POST",
+            const response = await fetch(`/api/blog/edit/${blogId}`, {
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
@@ -56,13 +99,11 @@ export default function CreateBlog() {
             });
 
             if (response.ok) {
-                setResponseMessage({ message: "Blog post created successfully!", type: "success" });
-                setFormData({ title: "", content: "", codeTemplateIds: [] });
-                setTags([]); // Reset tags
+                setResponseMessage({ message: "Blog post edited successfully!", type: "success" });
             } else {
                 const error = await response.json();
                 setResponseMessage({
-                    message: `Error: ${error.message || "Failed to create blog post"}`,
+                    message: `Error: ${error.message || "Failed to edit blog post"}`,
                     type: "error",
                 });
             }
@@ -72,7 +113,7 @@ export default function CreateBlog() {
             setLoadingQuery(false);
         }
     } else {
-        alert("You must be logged in to create a blog")
+        alert("You must be logged in and viewing a valid blog to edit the blog")
     }
   };
 
@@ -81,7 +122,7 @@ export default function CreateBlog() {
         <div className="max-w-3xl mx-auto px-4">
             <div className="bg-navy/50 border border-gold/30 rounded-lg shadow-lg p-6">
                 <h2 className="text-2xl font-bold mb-6 text-gold">
-                    Create a Blog Post
+                    Edit a Blog Post
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="mb-4">
@@ -145,7 +186,7 @@ export default function CreateBlog() {
                             disabled={loadingQuery}
                             className="w-full bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2"
                         >
-                            {loadingQuery ? "Creating..." : "Create Blog Post"}
+                            {loadingQuery ? "Editing..." : "Edit Blog Post"}
                         </button>
                     </div>
                 </form>
