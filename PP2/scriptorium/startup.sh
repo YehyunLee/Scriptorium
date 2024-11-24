@@ -288,6 +288,7 @@ npx prisma db seed
 echo "Admin user created successfully."
 echo "If error occurs, it means the admin user already exists."
 
+cd ./utils/code_executor/scripts
 
 # Personal note for myself (Yehyun)
 # Converthing Line Endings from CRLF to LF
@@ -296,5 +297,3 @@ echo "If error occurs, it means the admin user already exists."
 
 # Perm change
 # chmod +x startup.sh
-
-cd ./utils/code_executor/scripts
