@@ -296,3 +296,5 @@ echo "If error occurs, it means the admin user already exists."
 
 # Perm change
 # chmod +x startup.sh
+
+cd ./utils/code_executor/scripts
