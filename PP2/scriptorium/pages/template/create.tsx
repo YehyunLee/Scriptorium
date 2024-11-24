@@ -1,6 +1,6 @@
 import MonacoEditor from "@monaco-editor/react";
 import { useState, useEffect } from "react";
-import { TagInput } from "../components/TagInput";
+import { TagInput } from "../../components/TagInput";
 import "highlight.js/styles/vs2015.css";
 
 const SUPPORTED_LANGUAGES = [

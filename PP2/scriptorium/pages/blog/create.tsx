@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useAuth } from "./contexts/auth_context";
-import { TagInput } from "../components/TagInput";
+import { useAuth } from "../contexts/auth_context";
+import { TagInput } from "../../components/TagInput";
 
 export default function CreateBlog() {
   const { isAuthenticated } = useAuth();
