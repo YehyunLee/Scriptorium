@@ -3,105 +3,101 @@ import { useState, useEffect } from "react";
 import { TagInput } from "../../components/TagInput";
 import "highlight.js/styles/vs2015.css";
 
-const SUPPORTED_LANGUAGES = [
-  { id: "javascript", name: "JavaScript" },
-  { id: "python", name: "Python" },
-  { id: "java", name: "Java" },
-  { id: "cpp", name: "C++" },
-  { id: "c", name: "C" },
-];
+import { EditorWrapper } from "@/components/EditorWrapper";
+import { SUPPORTED_LANGUAGES } from "@/constants/languages";
 
-const HighlightEditor = ({
-  value,
-  onChange,
-  language,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  language: string;
-}) => {
-  const [highlightedCode, setHighlightedCode] = useState("");
 
-  useEffect(() => {
-    const highlightCode = async () => {
-      if (!value.trim()) {
-        setHighlightedCode("");
-        return;
-      }
+// const HighlightEditor = ({
+//   value,
+//   onChange,
+//   language,
+// }: {
+//   value: string;
+//   onChange: (value: string) => void;
+//   language: string;
+// }) => {
+//   const [highlightedCode, setHighlightedCode] = useState("");
 
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + "/api/code_run/highlight", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code: value, language }),
-        });
+//   useEffect(() => {
+//     const highlightCode = async () => {
+//       if (!value.trim()) {
+//         setHighlightedCode("");
+//         return;
+//       }
 
-        if (response.ok) {
-          const data = await response.json();
-          setHighlightedCode(data.highlightedCode);
-        }
-      } catch (error) {
-        console.error("Highlighting failed:", error);
-      }
-    };
+//       try {
+//         const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + "/api/code_run/highlight", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ code: value, language }),
+//         });
 
-    highlightCode();
-  }, [value, language]);
+//         if (response.ok) {
+//           const data = await response.json();
+//           setHighlightedCode(data.highlightedCode);
+//         }
+//       } catch (error) {
+//         console.error("Highlighting failed:", error);
+//       }
+//     };
 
-  return (
-    <div className="relative w-full h-full">
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="absolute top-0 left-0 w-full h-full bg-transparent text-transparent caret-white p-4 font-mono resize-none z-10"
-        spellCheck="false"
-      />
-      <pre className="absolute top-0 left-0 w-full h-full p-4 font-mono overflow-auto pointer-events-none">
-        <code
-          className={`language-${language}`}
-          dangerouslySetInnerHTML={{ __html: highlightedCode || value }}
-        />
-      </pre>
-    </div>
-  );
-};
+//     highlightCode();
+//   }, [value, language]);
 
-const EditorWrapper = ({
-  value,
-  onChange,
-  language,
-  editorType,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  language: string;
-  editorType: "monaco" | "highlight";
-}) => {
-  if (editorType === "monaco") {
-    return (
-      <MonacoEditor
-        height="100%"
-        defaultLanguage={language}
-        language={language}
-        value={value}
-        onChange={(value) => onChange(value || "")}
-        theme="vs-dark"
-        options={{
-          fontSize: 14,
-          minimap: { enabled: true },
-          scrollBeyondLastLine: false,
-          automaticLayout: true,
-          wordWrap: "on",
-          tabSize: 2,
-        }}
-      />
-    );
-  }
+//   return (
+//     <div className="relative w-full h-full">
+//       <textarea
+//         value={value}
+//         onChange={(e) => onChange(e.target.value)}
+//         className="absolute top-0 left-0 w-full h-full bg-transparent text-transparent caret-white p-4 font-mono resize-none z-10"
+//         spellCheck="false"
+//       />
+//       <pre className="absolute top-0 left-0 w-full h-full p-4 font-mono overflow-auto pointer-events-none">
+//         <code
+//           className={`language-${language}`}
+//           dangerouslySetInnerHTML={{ __html: highlightedCode || value }}
+//         />
+//       </pre>
+//     </div>
+//   );
+// };
 
-  return (
-    <HighlightEditor value={value} onChange={onChange} language={language} />
-  );
-};
+// const EditorWrapper = ({
+//   value,
+//   onChange,
+//   language,
+//   editorType,
+// }: {
+//   value: string;
+//   onChange: (value: string) => void;
+//   language: string;
+//   editorType: "monaco" | "highlight";
+// }) => {
+//   if (editorType === "monaco") {
+//     return (
+//       <MonacoEditor
+//         height="100%"
+//         defaultLanguage={language}
+//         language={language}
+//         value={value}
+//         onChange={(value) => onChange(value || "")}
+//         theme="vs-dark"
+//         options={{
+//           fontSize: 14,
+//           minimap: { enabled: true },
+//           scrollBeyondLastLine: false,
+//           automaticLayout: true,
+//           wordWrap: "on",
+//           tabSize: 2,
+//         }}
+//       />
+//     );
+//   }
+
+//   return (
+//     <HighlightEditor value={value} onChange={onChange} language={language} />
+//   );
+// };
 
 export default function CreateTemplate() {
   const [tags, setTags] = useState<string[]>([]);
