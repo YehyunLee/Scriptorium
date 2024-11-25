@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../pages/contexts/auth_context";
+import { useAuth } from "../utils/contexts/auth_context";
 import { useRouter } from "next/router";
 import { UserProfile } from "@/types/auth";
 

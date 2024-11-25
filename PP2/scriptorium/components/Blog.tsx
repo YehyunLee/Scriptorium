@@ -1,4 +1,4 @@
-import { useAuth } from "@/pages/contexts/auth_context";
+import { useAuth } from "@/utils/contexts/auth_context";
 import React, { useEffect, useState } from "react";
 
 const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id: number, title: string, content: string, tags: string, codeTemplates: string, onCloseHandler:()=>void }) => {

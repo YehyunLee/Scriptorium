@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useAuth } from '../../pages/contexts/auth_context';
+import { useAuth } from '../../utils/contexts/auth_context';
 import { parseTags } from '@/utils/helpers';
 
 interface Blog {
