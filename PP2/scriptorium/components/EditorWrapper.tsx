@@ -1,4 +1,3 @@
-// components/EditorWrapper.tsx
 import MonacoEditor from "@monaco-editor/react";
 import { HighlightEditor } from "./HighlightEditor";
 import "highlight.js/styles/vs2015.css";

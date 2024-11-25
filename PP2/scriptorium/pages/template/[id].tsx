@@ -1,4 +1,3 @@
-// pages/template/[id].tsx
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Template } from '@/types/general';
