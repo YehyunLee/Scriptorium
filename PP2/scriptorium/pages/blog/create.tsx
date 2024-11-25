@@ -51,7 +51,7 @@ export default function CreateBlog() {
                     ...formData,
                     // tags must be one string. not an array
                     tags: tags.join(", "), 
-                    codeTemplateIds: formData.codeTemplateIds
+                    codeTemplateIds: parseInt(formData.codeTemplateIds)
                 }),
             });
 

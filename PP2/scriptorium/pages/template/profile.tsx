@@ -1,23 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function SearchTemplates() {
   const [searchQueryString, setSearchQueryString] = useState<string>("");
   const [templates, setTemplates] = useState<any[]>([
-    {
-      id: "1",
-      title: "Title",
-      explanation: "explanation",
-      tags: "tags",
-      content: "content",
-    },
-    {
-      id: "2",
-      title: "Title",
-      explanation: "explanation",
-      tags: "tags",
-      content: "content",
-    },
   ]);
   const [loadingQuery, setLoadingQuery] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +48,10 @@ export default function SearchTemplates() {
     setPage(newPage);
     handleSearch();
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, []);
 
   // This part was done by Github Copilot to redesign the UI of the page
   return (
