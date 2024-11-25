@@ -49,6 +49,7 @@ model CodeTemplate {
   explanation String @default("No explanation provided.")
   tags        String // I want String[] actually but sqlite doesn't support it unless we use relation. For now use comma to separate tags
   content     String @default("No content provided.")
+  language    String @default("plaintext")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

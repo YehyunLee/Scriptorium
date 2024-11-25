@@ -8,7 +8,10 @@ import { NextApiRequest, NextApiResponse } from "next";
  * Access: Public
  * Payload: { search: string, page?: number, limit?: number }
  */
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== "GET") {
     res.setHeader("Allow", ["GET"]);
     res.status(405).json({ message: `Method ${req.method} not allowed` });
@@ -19,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (Array.isArray(search)) {
     search = search.join(" ");
   }
-  const pageNumber = parseInt(page as string , 10);
+  const pageNumber = parseInt(page as string, 10);
   const pageSize = parseInt(limit as string, 10);
   const skip = (pageNumber - 1) * pageSize;
 
@@ -34,18 +37,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             { content: { contains: search } },
           ],
         },
+        include: {
+          author: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
         skip,
         take: pageSize,
       }),
       prisma.codeTemplate.count({
-      where: {
-        OR: [
-          { title: { contains: search } },
-          { explanation: { contains: search } },
-          { tags: { contains: search } },
-          { content: { contains: search } },
-        ],
-      },
+        where: {
+          OR: [
+            { title: { contains: search } },
+            { explanation: { contains: search } },
+            { tags: { contains: search } },
+            { content: { contains: search } },
+          ],
+        },
       }),
     ]);
 

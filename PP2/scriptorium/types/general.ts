@@ -1,8 +1,13 @@
 export interface Template {
   id: number;
   title: string;
-  explanation: string;
   content: string;
+  explanation: string;
   tags: string;
-  createdAt: string
+  language: string;
+  author: {
+    firstName: string;
+    lastName: string;
+  };
+  createdAt: string;
 }

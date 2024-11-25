@@ -53,25 +53,27 @@ export default function SearchTemplates() {
           <>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {templates.map((template) => (
-                <div
-                  key={template.id}
-                  className="bg-navy/50 border border-gold/30 rounded-lg p-6 hover:border-gold transition-colors"
-                >
-                  <Link href={`/template/${template.id}`}>
-                    <h3 className="text-xl font-semibold text-gold mb-2">{template.title}</h3>
-                    <p className="text-white/80 mb-4 line-clamp-2">{template.explanation}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {parseTags(template.tags).map((tag, index) => (
-                        <span
-                          key={index}
-                          className="px-2 py-1 bg-gold/10 text-gold rounded-md text-sm"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </Link>
-                </div>
+          <div
+            key={template.id}
+            className="bg-navy/50 border border-gold/30 rounded-lg p-6 hover:border-gold transition-colors"
+          >
+            <Link href={`/template/${template.id}`}>
+              <h3 className="text-xl font-semibold text-gold mb-2">{template.title}</h3>
+              <p className="text-white/80 mb-4 line-clamp-2">{template.explanation}</p>
+              <p className="text-white/60 mb-2">Language: {template.language}</p>
+              <p className="text-white/60 mb-2">Author: {template.author.firstName} {template.author.lastName}</p>
+              <div className="flex flex-wrap gap-2">
+                {parseTags(template.tags).map((tag, index) => (
+            <span
+              key={index}
+              className="px-2 py-1 bg-gold/10 text-gold rounded-md text-sm"
+            >
+              {tag}
+            </span>
+                ))}
+              </div>
+            </Link>
+          </div>
               ))}
             </div>
 

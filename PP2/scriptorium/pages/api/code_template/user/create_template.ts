@@ -25,7 +25,7 @@ export default async function handler(
   }
 
   // From here, assume user is authenticated
-  const { title, explanation, tags, content } = req.body;
+  const { title, explanation, tags, content, language } = req.body;
   if (!content) {
     res.status(400).json({ error: "Template content is required" });
     return;
@@ -39,6 +39,7 @@ export default async function handler(
         tags: tags.join(", "), // Convert array to comma-separated string
         content,
         authorId: decoded.userId,
+        language,
       },
     });
 
