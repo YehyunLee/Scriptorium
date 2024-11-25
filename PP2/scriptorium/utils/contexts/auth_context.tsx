@@ -14,7 +14,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshAccessToken = async (): Promise<string> => {
     try {
-      const response = await fetch('/api/auth/refresh_token', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + '/api/auth/refresh_token', {
         method: 'POST',
         credentials: 'include'
       });

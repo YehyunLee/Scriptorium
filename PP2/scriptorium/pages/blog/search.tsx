@@ -16,7 +16,7 @@ export default function SearchBlogs() {
 
     try {
         const response = await fetch(
-            `/api/blog?search=${encodeURIComponent(
+            `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + `/api/blog?search=${encodeURIComponent(
                 searchQueryString
             )}&page=${page}&limit=${limit}`, {
                 method: "GET",

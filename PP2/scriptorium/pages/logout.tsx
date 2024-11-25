@@ -10,7 +10,7 @@ export default function Logout() {
   useEffect(() => {
     const handleLogout = async () => {
       try {
-        await fetch('/api/auth/logout', { 
+        await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + '/api/auth/logout', { 
           method: 'POST',
           credentials: 'include'
         });

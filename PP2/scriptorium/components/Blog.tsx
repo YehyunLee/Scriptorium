@@ -24,7 +24,7 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
     const loadBlogRating = async () => {
         try {
             const response = await fetch(
-                `/api/blog/${id}/get_rates`, {
+                `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + `/api/blog/${id}/get_rates`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -59,7 +59,7 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
 
         try {
             const response = await fetch(
-                `/api/blog/${id}/get_comments?page=${commentsPage}&limit=${commentsLimit}`, {
+                `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + `/api/blog/${id}/get_comments?page=${commentsPage}&limit=${commentsLimit}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -92,7 +92,7 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
     const getCommentRating = async (commentId: string) => {
         try {
             const response = await fetch(
-                `/api/comments/${commentId}/get_rates`, {
+                `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + `/api/comments/${commentId}/get_rates`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -130,7 +130,7 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
       if (newComment.trim() !== "") {
         if (isAuthenticated) {
             try {
-                const response = await fetch(`/api/blog/${id}/add_comment`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + `/api/blog/${id}/add_comment`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -189,7 +189,7 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
 
         if (isBlog) {
             try {
-                const response = await fetch(`/api/blog/${id}/add_rate`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + `/api/blog/${id}/add_rate`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -213,7 +213,7 @@ const Blog = ({ id, title, content, tags, codeTemplates, onCloseHandler } : { id
             let commentId = updatedComments[index].id
 
             try {
-                const response = await fetch(`/api/comments/${commentId}/add_rate`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + `/api/comments/${commentId}/add_rate`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

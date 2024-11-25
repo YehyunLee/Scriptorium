@@ -36,7 +36,7 @@ export default function EditBlog() {
     if (blogId) {
         try {
             const response = await fetch(
-                `/api/blog/${blogId}`, {
+                `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + `/api/blog/${blogId}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -84,7 +84,7 @@ export default function EditBlog() {
     if (isAuthenticated && blogId != "") {
         try {
             const token = localStorage.getItem("accessToken")
-            const response = await fetch(`/api/blog/edit/${blogId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + `/api/blog/edit/${blogId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

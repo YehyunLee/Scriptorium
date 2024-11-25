@@ -30,7 +30,7 @@ const HighlightEditor = ({
       }
 
       try {
-        const response = await fetch("/api/code_run/highlight", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + "/api/code_run/highlight", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code: value, language }),
@@ -132,7 +132,7 @@ export default function CreateTemplate() {
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await fetch("/api/code_template/user/create_template", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + "/api/code_template/user/create_template", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

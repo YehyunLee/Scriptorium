@@ -41,7 +41,7 @@ export default function CreateBlog() {
     if (isAuthenticated) {
         try {
             const token = localStorage.getItem("accessToken")
-            const response = await fetch("/api/blog", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + "/api/blog", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

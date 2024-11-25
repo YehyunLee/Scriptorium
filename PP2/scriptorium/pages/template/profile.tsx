@@ -31,7 +31,7 @@ export default function SearchTemplates() {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await fetch(
-        `/api/code_template/user/search_template?search=${encodeURIComponent(
+        `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + `/api/code_template/user/search_template?search=${encodeURIComponent(
           searchQueryString
         )}&page=${page}&limit=${limit}`,
         {

@@ -24,7 +24,7 @@ export default function ProfileBlogs() {
     setLoading(true);
     try {
       const response = await fetch(
-        `/api/blog?user_id=${user?.id}&page=${page}&limit=${limit}`
+        `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + `/api/blog?user_id=${user?.id}&page=${page}&limit=${limit}`
       );
       const data = await response.json();
       setBlogs(data.blogs);

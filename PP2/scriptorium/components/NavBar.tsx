@@ -26,7 +26,7 @@ const NavBar = () => {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
+      await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + "/api/auth/logout", { method: "POST" });
       logout();
       router.push("/");
     } catch (error) {

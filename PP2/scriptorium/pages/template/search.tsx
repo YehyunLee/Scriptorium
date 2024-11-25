@@ -15,7 +15,7 @@ export default function SearchTemplates() {
     setLoading(true);
     try {
       const response = await fetch(
-        `/api/code_template/visitor/search_template?search=${search}&page=${page}&limit=${limit}`
+        `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + `/api/code_template/visitor/search_template?search=${search}&page=${page}&limit=${limit}`
       );
       const data = await response.json();
       setTemplates(data.templates);
