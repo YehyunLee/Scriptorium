@@ -103,7 +103,6 @@ export default function TemplateDetail() {
     }
 
     try {
-      console.log(forkData);
       const response = await api.post(
         `/code_template/user/create_fork_template?id=${id}`,
         {
@@ -199,7 +198,6 @@ export default function TemplateDetail() {
       try {
         const response = await fetch(`/api/code_template/visitor/${id}`);
         if (!response.ok) throw new Error("Template not found");
-
         const data = await response.json();
         setTemplate(data);
       } catch (err) {
@@ -276,6 +274,46 @@ export default function TemplateDetail() {
                 By {template.author?.firstName} {template.author?.lastName} •
                 {new Date(template.createdAt).toLocaleDateString()}
               </p>
+              {/* Add fork info here */}
+              {template?.forkedFromId && (
+                <div className="mt-2 flex items-center gap-2 text-white/60">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
+                    />
+                  </svg>
+                  <span>
+                    Forked from{" "}
+                    <Link
+                      href={`/template/${template.forkedFromId}`}
+                      className="text-gold hover:underline inline-flex items-center gap-1"
+                    >
+                      {template.forkedFrom?.title}
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </Link>
+                  </span>
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-4">
               <select
@@ -434,19 +472,6 @@ export default function TemplateDetail() {
 
             {/* Add fork modal */}
             {showForkModal && <ForkModal />}
-
-            {/* // Add forked indicator if template is forked */}
-            {template?.forkedFrom && (
-              <div className="text-white/60 text-sm mb-4">
-                Forked from{" "}
-                <Link
-                  href={`/template/${template.forkedFrom.id}`}
-                  className="text-gold hover:underline"
-                >
-                  original template
-                </Link>
-              </div>
-            )}
           </div>
 
           {/* Content Section */}

@@ -1,7 +1,10 @@
 import prisma from "@/utils/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== "GET") {
     res.setHeader("Allow", ["GET"]);
     res.status(405).json({ message: `Method ${req.method} not allowed` });
@@ -18,6 +21,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           select: {
             firstName: true,
             lastName: true,
+          },
+        },
+        forkedFrom: {
+          select: {
+            title: true,
           },
         },
       },
