@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { Template } from "@/types/general";
 import { EditorWrapper } from "@/components/EditorWrapper";
 import { useAuth } from "@/utils/contexts/auth_context";
+import { SUPPORTED_LANGUAGES } from "@/constants/languages";
+import { TagInput } from "@/components/TagInput";
 
 export default function TemplateDetail() {
   const router = useRouter();
@@ -19,6 +21,10 @@ export default function TemplateDetail() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [editFormData, setEditFormData] = useState<Partial<Template>>({});
   // Partial in TypeScript means that the object can have some properties of the type Template but not all of them
+  const [editMessage, setEditMessage] = useState<{
+    text: string;
+    type: "success" | "error" | null;
+  }>({ text: "", type: null });
 
   const handleEdit = () => {
     setEditFormData({
@@ -36,7 +42,9 @@ export default function TemplateDetail() {
       const response = await api.put(
         `/code_template/user/edit_or_delete_template?id=${id}`,
         {
+          // convert tags to array
           ...editFormData,
+          tags: editFormData.tags?.split(","),
         }
       );
 
@@ -44,9 +52,15 @@ export default function TemplateDetail() {
         const updatedTemplate = await response.json();
         setTemplate(updatedTemplate.template);
         setIsEditing(false);
+        setEditMessage({
+          text: "Template updated successfully",
+          type: "success",
+        });
+        setTimeout(() => setEditMessage({ text: "", type: null }), 3000);
       }
     } catch (error) {
       console.error("Failed to update template:", error);
+      setEditMessage({ text: "Failed to update template", type: "error" });
     }
   };
 
@@ -168,6 +182,18 @@ export default function TemplateDetail() {
   return (
     <div className="min-h-screen bg-navy p-8">
       <div className="max-w-7xl mx-auto">
+        {editMessage.text && (
+          <div
+            className={`mb-4 p-3 rounded-md ${
+              editMessage.type === "success"
+                ? "bg-green-500/10 text-green-500 border border-green-500"
+                : "bg-red-500/10 text-red-500 border border-red-500"
+            }`}
+          >
+            {editMessage.text}
+          </div>
+        )}
+
         <div className="bg-navy/50 border border-gold/30 rounded-lg p-6 mb-8">
           <div className="flex justify-between items-start mb-6">
             <div>
@@ -312,40 +338,95 @@ export default function TemplateDetail() {
             </div>
           </div>
 
-          {/* Tags Section */}
-          <div className="flex flex-wrap gap-2 mb-6">
-            {template.tags.split(",").map((tag, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-gold/10 text-gold rounded-full text-sm border border-gold/20"
-              >
-                {tag.trim()}
-              </span>
-            ))}
-          </div>
+          {/* Content Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Explanation Column */}
+            <div>
+              <label className="block text-sm font-medium text-gold mb-2">
+                Explanation
+              </label>
+              {isEditing ? (
+                <textarea
+                  value={editFormData.explanation}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      explanation: e.target.value,
+                    })
+                  }
+                  className="w-full bg-navy/50 border border-gold/30 rounded-md px-3 py-2 text-white/80"
+                  rows={4}
+                />
+              ) : (
+                <p className="text-white/80">{template.explanation}</p>
+              )}
+            </div>
 
-          {/* Explanation Section */}
-          {isEditing ? (
-            <textarea
-              value={editFormData.explanation}
-              onChange={(e) =>
-                setEditFormData({
-                  ...editFormData,
-                  explanation: e.target.value,
-                })
-              }
-              className="w-full bg-navy/50 border border-gold/30 rounded-md px-3 py-2 text-white/80 mb-8"
-              rows={4}
-            />
-          ) : (
-            <p className="text-white/80 mb-8">{template.explanation}</p>
-          )}
+            {/* Tags and Language Column */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gold mb-2">
+                  Tags
+                </label>
+                {isEditing ? (
+                  <TagInput
+                    tags={
+                      editFormData.tags?.split(",").map((t) => t.trim()) || []
+                    }
+                    onTagsChange={(newTags) =>
+                      setEditFormData({
+                        ...editFormData,
+                        tags: newTags.join(", "),
+                      })
+                    }
+                  />
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {template.tags.split(",").map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-gold/10 text-gold rounded-full text-sm border border-gold/20"
+                      >
+                        {tag.trim()}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {isEditing && (
+                <div>
+                  <label className="block text-sm font-medium text-gold mb-2">
+                    Language
+                  </label>
+                  <select
+                    value={editFormData.language}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        language: e.target.value,
+                      })
+                    }
+                    className="bg-navy/50 text-white px-3 py-2 border border-gold/30 rounded-md w-full"
+                  >
+                    {SUPPORTED_LANGUAGES.map((lang) => (
+                      <option key={lang.id} value={lang.id}>
+                        {lang.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Code Editor Section */}
         <div className="bg-navy/50 border border-gold/30 rounded-lg overflow-hidden">
           <div className="border-b border-gold/30 px-4 py-2 bg-navy/70">
-            <span className="text-gold font-medium">{template.language}</span>
+            <span className="text-gold font-medium">
+              {isEditing ? editFormData.language : template.language}
+            </span>
           </div>
           <div className="h-[600px]">
             <EditorWrapper
@@ -354,7 +435,9 @@ export default function TemplateDetail() {
                 isEditing &&
                 setEditFormData({ ...editFormData, content: value })
               }
-              language={template.language}
+              language={
+                isEditing ? editFormData.language || "" : template.language
+              }
               editorType={editorType}
               readOnly={!isEditing}
             />
