@@ -212,7 +212,7 @@ export default function TemplateDetail() {
                 </h1>
               )}
               <p className="text-white/60">
-                By {template.author.firstName} {template.author.lastName} •
+                By {template.author?.firstName} {template.author?.lastName} •
                 {new Date(template.createdAt).toLocaleDateString()}
               </p>
             </div>
