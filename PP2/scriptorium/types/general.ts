@@ -10,4 +10,5 @@ export interface Template {
     lastName: string;
   };
   createdAt: string;
+  authorId?: number;
 }
