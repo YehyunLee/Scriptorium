@@ -11,4 +11,8 @@ export interface Template {
   };
   createdAt: string;
   authorId?: number;
+  forkedFrom?: {
+    id: number;
+    title: string;
+  };
 }

@@ -5,7 +5,9 @@ import { EditorWrapper } from "@/components/EditorWrapper";
 import { useAuth } from "@/utils/contexts/auth_context";
 import { SUPPORTED_LANGUAGES } from "@/constants/languages";
 import { TagInput } from "@/components/TagInput";
+import Link from "next/link";
 
+// Credit to Yehyun, worked with Github AutoComplete to improve the UI
 export default function TemplateDetail() {
   const router = useRouter();
   const { id } = router.query;
@@ -25,6 +27,7 @@ export default function TemplateDetail() {
     text: string;
     type: "success" | "error" | null;
   }>({ text: "", type: null });
+  const isAuthenticated = useAuth().isAuthenticated;
 
   const handleEdit = () => {
     setEditFormData({
@@ -77,26 +80,109 @@ export default function TemplateDetail() {
     }
   };
 
-  const DeleteModal = () => (
+  const [showForkModal, setShowForkModal] = useState(false);
+  const [forkData, setForkData] = useState<{
+    title: string;
+    explanation: string;
+    content: string;
+    tags: string[];
+    language: string;
+  }>({
+    title: "",
+    explanation: "",
+    content: "",
+    tags: [],
+    language: "",
+  });
+
+  // Add fork handler
+  const handleFork = async () => {
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+
+    try {
+      console.log(forkData);
+      const response = await api.post(
+        `/code_template/user/create_fork_template?id=${id}`,
+        {
+          ...forkData,
+          tags: forkData.tags,
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setShowForkModal(false);
+        router.push(`/template/${data.template.id}`);
+      }
+    } catch (error) {
+      console.error("Failed to fork template:", error);
+    }
+  };
+
+  // Add ForkModal component
+  const ForkModal = () => (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-navy border border-gold/30 rounded-lg p-6 max-w-md w-full mx-4">
-        <h3 className="text-xl font-bold text-gold mb-4">Delete Template</h3>
-        <p className="text-white/80 mb-6">
-          Are you sure you want to delete this template? This action cannot be
-          undone.
-        </p>
-        <div className="flex justify-end gap-4">
+      <div className="bg-navy border border-gold/30 rounded-lg p-6 max-w-2xl w-full mx-4">
+        <h3 className="text-xl font-bold text-gold mb-4">Fork Template</h3>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gold mb-2">
+              Title
+            </label>
+            <input
+              type="text"
+              value={forkData.title}
+              onChange={(e) =>
+                setForkData({ ...forkData, title: e.target.value })
+              }
+              className="w-full bg-navy/50 border border-gold/30 rounded-md px-3 py-2 text-white"
+              placeholder="Enter new title"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gold mb-2">
+              Tags
+            </label>
+            <TagInput
+              tags={forkData.tags}
+              onTagsChange={(newTags) =>
+                setForkData({ ...forkData, tags: newTags })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gold mb-2">
+              Explanation
+            </label>
+            <textarea
+              value={forkData.explanation}
+              onChange={(e) =>
+                setForkData({ ...forkData, explanation: e.target.value })
+              }
+              className="w-full bg-navy/50 border border-gold/30 rounded-md px-3 py-2 text-white"
+              rows={4}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-4 mt-6">
           <button
-            onClick={() => setShowDeleteModal(false)}
+            onClick={() => setShowForkModal(false)}
             className="px-4 py-2 text-white/80 hover:text-white"
           >
             Cancel
           </button>
           <button
-            onClick={handleDelete}
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+            onClick={handleFork}
+            className="px-4 py-2 bg-gold text-navy rounded-md hover:bg-gold/90"
           >
-            Delete
+            Fork Template
           </button>
         </div>
       </div>
@@ -105,31 +191,6 @@ export default function TemplateDetail() {
 
   // Update header section to include edit/delete buttons for owners
   const isOwner = user?.id === template?.authorId;
-
-  const EditorToggle = () => (
-    <div className="flex items-center gap-2 mb-2">
-      <button
-        onClick={() => setEditorType("monaco")}
-        className={`px-3 py-1 rounded-md text-sm transition-colors ${
-          editorType === "monaco"
-            ? "bg-gold text-navy"
-            : "bg-gold/20 text-gold hover:bg-gold/30"
-        }`}
-      >
-        Monaco Editor
-      </button>
-      <button
-        onClick={() => setEditorType("highlight")}
-        className={`px-3 py-1 rounded-md text-sm transition-colors ${
-          editorType === "highlight"
-            ? "bg-gold text-navy"
-            : "bg-gold/20 text-gold hover:bg-gold/30"
-        }`}
-      >
-        Simple Editor
-      </button>
-    </div>
-  );
 
   useEffect(() => {
     const fetchTemplate = async () => {
@@ -335,7 +396,57 @@ export default function TemplateDetail() {
                   </>
                 )}
               </button>
+
+              <button
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    router.push("/login");
+                    return;
+                  }
+                  setForkData({
+                    title: `Fork of ${template.title}`,
+                    explanation: template.explanation,
+                    content: template.content,
+                    tags: template.tags.split(",").map((t) => t.trim()),
+                    language: template.language,
+                  });
+                  setShowForkModal(true);
+                }}
+                className="bg-gold/20 text-gold px-4 py-2 rounded-md hover:bg-gold/30 
+      transition-colors flex items-center gap-2"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
+                  />
+                </svg>
+                Fork
+              </button>
             </div>
+
+            {/* Add fork modal */}
+            {showForkModal && <ForkModal />}
+
+            {/* // Add forked indicator if template is forked */}
+            {template?.forkedFrom && (
+              <div className="text-white/60 text-sm mb-4">
+                Forked from{" "}
+                <Link
+                  href={`/template/${template.forkedFrom.id}`}
+                  className="text-gold hover:underline"
+                >
+                  original template
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Content Section */}

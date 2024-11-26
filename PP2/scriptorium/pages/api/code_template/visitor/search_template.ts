@@ -44,6 +44,12 @@ export default async function handler(
               lastName: true,
             },
           },
+          forkedFrom: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
         },
         skip,
         take: pageSize,

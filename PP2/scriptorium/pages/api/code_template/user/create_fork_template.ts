@@ -1,5 +1,6 @@
 import prisma from "../../../../utils/prisma";
 import { verifyUser } from "../../../../utils/verify_user";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
  * Fork a code template
@@ -8,7 +9,7 @@ import { verifyUser } from "../../../../utils/verify_user";
  * Access: User
  * Payload: { id, title?, explanation?, tags?, content }
  */
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     res.setHeader("Allow", ["POST"]);
     res.status(405).json({ message: `Method ${req.method} not allowed` });
@@ -22,7 +23,7 @@ export default async function handler(req, res) {
   }
 
   const { id } = req.query;
-  const { title, explanation, tags, content } = req.body;
+  const { title, explanation, tags, content, language } = req.body;
 
   if (!content || !id) {
     res.status(400).json({ error: "Content is required" });
@@ -31,7 +32,7 @@ export default async function handler(req, res) {
 
   try {
     const originalTemplate = await prisma.codeTemplate.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(id as string) },
     });
 
     if (!originalTemplate) {
@@ -47,6 +48,7 @@ export default async function handler(req, res) {
         content,
         authorId: decoded.userId,
         forkedFromId: originalTemplate.id, // original template fork lists will be updated automatically
+        language: language || originalTemplate.language,
       },
     });
 
