@@ -7,10 +7,10 @@ import { SUPPORTED_LANGUAGES } from "@/constants/languages";
 
 // Change in codeExecutor
 export function codeExecutor(
-    sourceCode,
-    language,
+    sourceCode: string,
+    language: string,
     userInput = "",
-    outputHandler
+    outputHandler: (data: string) => void
 ) {
   return new Promise((resolve, reject) => {
 
@@ -90,14 +90,14 @@ export function codeExecutor(
           reject(`Execution failed with code ${exitCode}: ${outputData.trim()}`);
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       reject(`Error: ${error.message}`);
     }
   });
 }
 
 // Mapping languages to Docker images and commands
-export function mapLanguageToDocker(language, filePath) {
+export function mapLanguageToDocker(language: string, filePath: string) {
   const dockerMap = {
     python: {
       image: "python_executor", // Docker image for Python
@@ -143,7 +143,7 @@ export function mapLanguageToDocker(language, filePath) {
       image: "assembly_executor",
       runCmd: "sh -c 'nasm -f elf64 /usr/src/app/temp.asm && ld -o temp /usr/src/app/temp.o && ./temp'",
     },
-  };
+  } as Record<string, { image: string; runCmd: string }>;
 
   if (!dockerMap[language]) {
     throw new Error("Unsupported language");
@@ -152,7 +152,7 @@ export function mapLanguageToDocker(language, filePath) {
   return dockerMap[language];
 }
 
-export function createTempFile(language, sourceCode) {
+export function createTempFile(language: string, sourceCode: string) {
   const extensions = {
     c: "c",
     cpp: "cpp",
@@ -165,7 +165,7 @@ export function createTempFile(language, sourceCode) {
     go: "go",
     swift: "swift",
     assembly: "asm",
-  };
+  } as Record<string, string>;
 
   if (!extensions[language]) {
     throw new Error("Unsupported language");
