@@ -1,6 +1,6 @@
 import prisma from '../../../../utils/prisma';
 import {verifyUser} from "../../../../utils/verify_user";
-
+import type {NextApiRequest, NextApiResponse} from 'next';
 
 /**
  * Blog Comment API: Create a new comment or reply
@@ -9,7 +9,7 @@ import {verifyUser} from "../../../../utils/verify_user";
  * Access: User
  * Payload: {content, parentCommentId}
  */
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { id } = req.query;  // blogPostId
 
     if (req.method !== 'POST') {
@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
         // Check if the blog post exists
         const blogPost = await prisma.blogPost.findUnique({
-            where: { id: parseInt(id) },
+            where: { id: parseInt(id as string) },
             select: { id: true }
         });
 
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
             const parentComment = await prisma.comment.findUnique({
                 where: {
                     id: parseInt(parentCommentId),
-                    blogPostId: parseInt(id)
+                    blogPostId: parseInt(id as string)
                 },
                 select: { id: true }
             });
@@ -59,13 +59,13 @@ export default async function handler(req, res) {
             data: {
                 content,
                 authorId: user.userId,
-                blogPostId: parseInt(id),  // Associate with the blog post
+                blogPostId: parseInt(id as string),  // Associate with the blog post
                 parentCommentId: parentCommentId ? parseInt(parentCommentId) : null // Optional for replies
             }
         });
 
         res.status(201).json(comment);
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ error: 'Internal Server Error', details: error.message });
     }
 }

@@ -300,6 +300,6 @@ cd ./utils/code_executor/scripts
 
 
 # Full command
-# dos2unix startup.sh && chmod +x startup.sh
-# dos2unix run.sh && chmod +x run.sh
-# dos2unix utils/code_executor/scripts/setup.sh && chmod +x utils/code_executor/scripts/setup.sh
+dos2unix startup.sh && chmod +x startup.sh
+dos2unix run.sh && chmod +x run.sh
+dos2unix utils/code_executor/scripts/setup.sh && chmod +x utils/code_executor/scripts/setup.sh

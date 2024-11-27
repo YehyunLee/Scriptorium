@@ -1,17 +1,17 @@
-import {upsertRating} from "../../../../utils/rating";
+import { upsertRating } from "../../../../utils/rating";
 import {verifyUser} from "../../../../utils/verify_user";
 import prisma from '../../../../utils/prisma';
-
+import type {NextApiRequest, NextApiResponse} from 'next';
 
 /**
- * Comment Rating API: Rate a comment
+ * Blog Rating API: Rate a blog post
  * Allowed method: POST
- * Url: /api/comments/[id]/add_rate
+ * Url: /api/blog/[id]/add_rate
  * Access: User
  * Payload: {ratingValue}
  */
-export default async function handler(req, res) {
-    const { id } = req.query;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const { id } = req.query;  // blogPostId
 
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method is not allowed' });
@@ -19,33 +19,31 @@ export default async function handler(req, res) {
 
     try {
         const user = verifyUser(req);
+        const { ratingValue } = req.body;
 
         if (!user) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        const { ratingValue } = req.body;
-
         if (ratingValue === undefined || ratingValue < -1 || ratingValue > 1) {
             return res.status(400).json({ message: 'Rating must be either -1, 0, or 1' });
         }
 
-        // Check if the comment exists
-        const comment = await prisma.comment.findUnique({
-            where: {
-                id: parseInt(id),
-            },
+        // Check if the blog post exists
+        const blogPost = await prisma.blogPost.findUnique({
+            where: { id: parseInt(id as string) },
+            select: { id: true }
         });
 
-        if (!comment) {
-            return res.status(404).json({ message: 'Comment not found' });
+        if (!blogPost) {
+            return res.status(404).json({ message: 'Blog post not found' });
         }
 
         // Use the helper function for rating logic
-        const rating = await upsertRating(user.userId, ratingValue, 'comment', id);
+        const rating = await upsertRating(user.userId, ratingValue, 'blogPost', id);
 
         res.status(201).json(rating);
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ error: 'Internal Server Error', details: error.message });
     }
 }
