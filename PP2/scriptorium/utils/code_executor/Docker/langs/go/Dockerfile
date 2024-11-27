@@ -1,5 +1,5 @@
-FROM golang:1.21-slim
+FROM golang:latest
 
 WORKDIR /usr/src/app
 
-CMD ["sh", "-c", "go run temp.go"]
+CMD ["go", "run", "temp.go"]

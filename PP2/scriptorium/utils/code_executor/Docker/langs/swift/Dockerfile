@@ -1,5 +1,3 @@
-FROM swift:5.9-slim
-
+FROM swift:latest
 WORKDIR /usr/src/app
-
 CMD ["swift", "temp.swift"]

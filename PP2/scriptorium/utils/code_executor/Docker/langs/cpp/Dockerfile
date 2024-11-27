@@ -1,6 +1,6 @@
-FROM gcc:12-slim
+FROM gcc:latest
 
 WORKDIR /usr/src/app
 
 # Compile and run the C++ code
-CMD ["sh", "-c", "g++ -o temp.out temp.cpp && ./temp.out"]
+CMD ["g++", "temp.cpp", "-o", "temp.out", "&&", "./temp.out"]

@@ -103,7 +103,7 @@ export function mapLanguageToDocker(language: string, filePath: string) {
     },
     java: {
       image: "java_executor",
-      runCmd: "java Main",
+      runCmd: "javac /usr/src/app/temp.java && java -cp /usr/src/app Main",
     },
     javascript: {
       image: "javascript_executor",
@@ -123,7 +123,7 @@ export function mapLanguageToDocker(language: string, filePath: string) {
     },
     csharp: {
       image: "csharp_executor",
-      runCmd: "dotnet run",
+      runCmd: "dotnet-script /usr/src/app/temp.cs",
     },
     php: {
       image: "php_executor",
