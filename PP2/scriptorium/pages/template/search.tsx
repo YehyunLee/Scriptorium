@@ -52,7 +52,7 @@ export default function SearchTemplates() {
         ) : (
           <>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {templates.map((template) => (
+              {templates?.map((template) => (
           <div
             key={template.id}
             className="bg-navy/50 border border-gold/30 rounded-lg p-6 hover:border-gold transition-colors"
