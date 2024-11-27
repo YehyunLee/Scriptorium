@@ -320,7 +320,14 @@ const Blog = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
       <div className="bg-navy border border-gold/30 rounded-lg shadow-lg pt-2 pb-6 pl-6 pr-2 max-w-3xl w-full">
-        <div className="w-full flex justify-end">
+
+        <div className="w-full flex justify-between items-center mb-4">
+          <Link
+            href={`/blog/${id}`}
+            className="text-gold hover:text-gold/80 px-4 py-2 border border-gold/30 rounded-md"
+          >
+            View Full Screen →
+          </Link>
           <button
             onClick={onCloseHandler}
             className="w-8 h-8 text-gold rounded-md text-2xl hover:text-gold/80 focus:outline-none"

@@ -1,6 +1,8 @@
 import Blog from "@/components/Blog";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from 'next/router';
+
 
 export default function SearchBlogs() {
   const [searchQueryString, setSearchQueryString] = useState<string>("");
@@ -10,6 +12,8 @@ export default function SearchBlogs() {
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(10);
   const [selectedBlog, setSelectedBlog] = useState<any>(null);
+  const router = useRouter();
+
 
   const handleSearch = async () => {
     setLoadingQuery(true);
@@ -55,6 +59,18 @@ export default function SearchBlogs() {
     handleSearch();
   };
 
+
+  const handleBlogClick = (blog: any) => {
+    setSelectedBlog({
+      id: blog.id,
+      authorId: blog.authorId,
+      title: blog.title,
+      content: blog.content,
+      tags: blog.tags,
+      codeTemplates: Array.isArray(blog.codeTemplates) ? blog.codeTemplates : [],
+    });
+  };
+
   return (
     <div className="min-h-screen bg-navy p-12">
       <div className="max-w-3xl mx-auto px-4">
@@ -87,42 +103,40 @@ export default function SearchBlogs() {
                   <li
                     key={blog.id}
                     className="p-4 cursor-pointer hover:bg-gray-600"
-                    onClick={() =>
-                      setSelectedBlog({
-                        id: blog.id,
-                        authorId: blog.authorId,
-                        title: blog.title,
-                        content: blog.content,
-                        tags: blog.tags,
-                        codeTemplates: Array.isArray(blog.codeTemplates) ? blog.codeTemplates : [],
-                      })
-                    }
+                    onClick={() => handleBlogClick(blog)}
                   >
-                    <h3 className="text-lg font-bold text-gold">
-                      {blog.title}
-                    </h3>
-                    <p className="text-sm text-gold/90">{blog.content}</p>
-                    <div className="text-sm text-gold/50 mt-1">
-                      Tags: {blog.tags}
-                    </div>
-                    <div className="text-sm text-gold/50 mt-1">
-                      Templates:{" "}
-                      {blog.codeTemplates?.length === 0 ? (
-                        "None"
-                      ) : (
-                        <div className="inline-flex gap-2">
-                          {blog.codeTemplates.map((template: any) => (
-                            <Link
-                              key={template.id}
-                              href={`/template/${template.id}`}
-                              className="text-gold hover:underline"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {template.title}
-                            </Link>
-                          ))}
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-lg font-bold text-gold">{blog.title}</h3>
+                        <p className="text-sm text-gold/90">{blog.content}</p>
+                        <div className="text-sm text-gold/50 mt-1">Tags: {blog.tags}</div>
+                        <div className="text-sm text-gold/50 mt-1">
+                          Templates:{" "}
+                          {blog.codeTemplates?.length === 0 ? (
+                            "None"
+                          ) : (
+                            <div className="inline-flex gap-2">
+                              {blog.codeTemplates.map((template: any) => (
+                                <Link
+                                  key={template.id}
+                                  href={`/template/${template.id}`}
+                                  className="text-gold hover:underline"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  {template.title}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
+                      <Link
+                        href={`/blog/${blog.id}`}
+                        className="text-gold hover:text-gold/80 ml-4"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        View Full Screen →
+                      </Link>
                     </div>
                   </li>
                 ))}
@@ -152,8 +166,8 @@ export default function SearchBlogs() {
                 disabled={loadingQuery || page === 1}
                 onClick={() => handlePageChange(page - 1)}
                 className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 ${page === 1
-                    ? "cursor-not-allowed opacity-50"
-                    : "hover:opacity-80"
+                  ? "cursor-not-allowed opacity-50"
+                  : "hover:opacity-80"
                   }`}
               >
                 Previous
@@ -162,8 +176,8 @@ export default function SearchBlogs() {
                 disabled={loadingQuery || blogs.length < limit}
                 onClick={() => handlePageChange(page + 1)}
                 className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 ${blogs.length < limit
-                    ? "cursor-not-allowed opacity-50"
-                    : "hover:opacity-80"
+                  ? "cursor-not-allowed opacity-50"
+                  : "hover:opacity-80"
                   }`}
               >
                 Next
