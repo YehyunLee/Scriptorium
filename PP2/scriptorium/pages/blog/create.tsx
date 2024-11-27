@@ -28,8 +28,14 @@ export default function CreateBlog() {
 
   const handleCodeTemplateIdsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    let ids = value.split(",").map((id) => id.trim());
-    if (ids.length == 1 && ids[0] == '') { ids = [] }
+  // Split by comma, trim whitespace, filter empty strings, convert to numbers
+  const ids = value
+    .split(",")
+    .map(id => id.trim())
+    .filter(id => id !== '')
+    .map(id => parseInt(id))
+    .filter(id => !isNaN(id));
+    
     setFormData({ ...formData, codeTemplateIds: ids });
   };
 
@@ -48,10 +54,11 @@ export default function CreateBlog() {
                     Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    ...formData,
-                    // tags must be one string. not an array
+          title: formData.title,
+          content: formData.content,
                     tags: tags.join(", "), 
-                    codeTemplateIds: parseInt(formData.codeTemplateIds)
+          // Send array of numbers directly
+          codeTemplateIds: formData.codeTemplateIds
                 }),
             });
 
