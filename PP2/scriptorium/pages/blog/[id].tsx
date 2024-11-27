@@ -272,9 +272,23 @@ export default function BlogPage() {
         <div className="min-h-screen bg-navy p-12">
             <div className="max-w-6xl mx-auto">
                 <div className="bg-navy/50 border border-gold/30 rounded-lg shadow-lg p-8">
-                    <Link href="/blog/search" className="text-gold hover:text-gold/80 mb-6 inline-block">
-                        ← Back to Search
-                    </Link>
+
+                    <div className="flex justify-between items-center mb-6">
+                        <div className="space-x-4">
+                            <Link
+                                href="/blog/search"
+                                className="text-gold hover:text-gold/80 inline-block px-4 py-2 border border-gold/30 rounded-md"
+                            >
+                                ← Back to Search
+                            </Link>
+                            <Link
+                                href="/blog/profile"
+                                className="text-gold hover:text-gold/80 inline-block px-4 py-2 border border-gold/30 rounded-md"
+                            >
+                                My Blog →
+                            </Link>
+                        </div>
+                    </div>
 
                     <div className="flex items-start space-x-6">
                         <div className="flex flex-col items-center">
