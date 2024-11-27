@@ -159,6 +159,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     include: {
                         author: {
                             select: {
+                                id: true,
                                 firstName: true,
                                 lastName: true,
                                 email: true,
