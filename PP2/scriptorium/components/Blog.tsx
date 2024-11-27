@@ -51,15 +51,17 @@ const Blog = ({
 
   useEffect(() => {
     setAuthToken(localStorage.getItem("accessToken"));
-    loadBlogRating();
-    loadComments();
-  }, []);
+    if (id) {
+      loadBlogRating();
+      loadComments();
+    }
+  }, [id]);
 
   const loadBlogRating = async () => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
-          `/api/blog/${id}/get_rates`,
+        `/api/blog/${id}/get_rates`,
         {
           method: "GET",
           headers: {
@@ -97,8 +99,7 @@ const Blog = ({
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
-          `/api/blog/${id}/get_comments?page=${commentsPage}&limit=${commentsLimit}`,
+        `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}/api/blog/${id}/get_comments?page=${commentsPage}&limit=${commentsLimit}`,
         {
           method: "GET",
           headers: {
@@ -107,33 +108,37 @@ const Blog = ({
         }
       );
 
-      if (response.ok) {
-        const data = await response.json();
-
-        let comments = [];
-        if (data.comments && data.comments.length > 0) {
-          for (const comment of data.comments) {
-            let averageCommentRate = await getCommentRating(comment.id);
-            let newComment = comment;
-            newComment.averageRate = averageCommentRate;
-            comments.push(newComment);
-          }
-        }
-        setComments(comments || []);
-      } else {
-        const errorData = await response.json();
-        setCommentsError(errorData.message || "Failed to fetch blogs");
+      if (!response.ok) {
+        throw new Error("Failed to fetch comments");
       }
+
+      const data = await response.json();
+
+      // Process comments with ratings in parallel
+      const commentsWithRatings = await Promise.all(
+        (data.comments || []).map(async (comment: any) => {
+          const averageCommentRate = await getCommentRating(comment.id);
+          return {
+            ...comment,
+            averageRate: averageCommentRate
+          };
+        })
+      );
+
+      setComments(commentsWithRatings);
     } catch (err: any) {
       setCommentsError(err.message || "An unexpected error occurred");
+    } finally {
+      setLoadingComments(false);
     }
   };
+
 
   const getCommentRating = async (commentId: string) => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
-          `/api/comments/${commentId}/get_rates`,
+        `/api/comments/${commentId}/get_rates`,
         {
           method: "GET",
           headers: {
@@ -170,43 +175,45 @@ const Blog = ({
     }
   };
 
-  const handleAddComment = async () => {
-    if (newComment.trim() !== "") {
-      if (isAuthenticated) {
-        try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
-              `/api/blog/${id}/add_comment`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${authToken}`,
-              },
-              body: JSON.stringify({
-                content: newComment,
-                parentCommentId: null,
-              }),
-            }
-          );
 
-          if (response.ok) {
-            setComments([
-              ...comments,
-              { id: comments.length, text: newComment, votes: 0 },
-            ]);
-            setNewComment("");
-          } else {
-            setCommentsError("Error adding comment");
-          }
-        } catch (err: any) {
-          setCommentsError(`Error: ${err.message}`);
-        }
-      } else {
+
+  const handleAddComment = async () => {
+    if (newComment.trim() === "" || !isAuthenticated) {
+      if (!isAuthenticated) {
         alert("You must be logged in to post a comment");
       }
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}/api/blog/${id}/add_comment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({
+            content: newComment,
+            parentCommentId: null,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        // Clear input first
+        setNewComment("");
+        // Reload comments to get fresh data including the new comment
+        await loadComments();
+      } else {
+        setCommentsError("Error adding comment");
+      }
+    } catch (err: any) {
+      setCommentsError(`Error: ${err.message}`);
     }
   };
+
 
   const handleVote = async (index: number, change: number, isBlog: boolean) => {
     let actualChange = change;
@@ -247,7 +254,7 @@ const Blog = ({
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
-            `/api/blog/${id}/add_rate`,
+          `/api/blog/${id}/add_rate`,
           {
             method: "POST",
             headers: {
@@ -275,7 +282,7 @@ const Blog = ({
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
-            `/api/comments/${commentId}/add_rate`,
+          `/api/comments/${commentId}/add_rate`,
           {
             method: "POST",
             headers: {
@@ -351,30 +358,30 @@ const Blog = ({
           <div>
             <h2 className="text-2xl font-bold text-gold">{title}</h2>
             <p className="text-gold/90 mt-2">{content}</p>
-          <div className="mt-4 text-sm text-gold/50">
-  <p>
-    <span className="font-bold">Tags:</span> {tags || "None"}
-  </p>
-  <p>
-    <span className="font-bold">Templates:</span>{" "}
-    {Array.isArray(codeTemplates) && codeTemplates.length > 0 ? (
-      <div className="inline-flex gap-2">
-        {codeTemplates.map((template) => (
-          <Link
-            key={template.id}
-            href={`/template/${template.id}`}
-            className="text-gold hover:underline"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {template.title}
-          </Link>
-        ))}
-      </div>
-    ) : (
-      "None"
-    )}
-  </p>
-</div> 
+            <div className="mt-4 text-sm text-gold/50">
+              <p>
+                <span className="font-bold">Tags:</span> {tags || "None"}
+              </p>
+              <p>
+                <span className="font-bold">Templates:</span>{" "}
+                {Array.isArray(codeTemplates) && codeTemplates.length > 0 ? (
+                  <div className="inline-flex gap-2">
+                    {codeTemplates.map((template) => (
+                      <Link
+                        key={template.id}
+                        href={`/template/${template.id}`}
+                        className="text-gold hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {template.title}
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  "None"
+                )}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -409,7 +416,7 @@ const Blog = ({
                       onClick={() => handleVote(index, 1, false)}
                       className={
                         (currentUserCommentRatings[comment.id] &&
-                        currentUserCommentRatings[comment.id] == 1
+                          currentUserCommentRatings[comment.id] == 1
                           ? "text-gold hover:text-gold/80"
                           : "text-white hover:opacity-80") +
                         " text-xl hover:text-gold/80 focus:outline-none"
@@ -424,7 +431,7 @@ const Blog = ({
                       onClick={() => handleVote(index, -1, false)}
                       className={
                         (currentUserCommentRatings[comment.id] &&
-                        currentUserCommentRatings[comment.id] == -1
+                          currentUserCommentRatings[comment.id] == -1
                           ? "text-gold hover:text-gold/80"
                           : "text-white hover:opacity-80") +
                         " text-xl hover:text-gold/80 focus:outline-none"

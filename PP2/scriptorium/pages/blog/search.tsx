@@ -18,9 +18,9 @@ export default function SearchBlogs() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
-          `/api/blog?search=${encodeURIComponent(
-            searchQueryString
-          )}&page=${page}&limit=${limit}`,
+        `/api/blog?search=${encodeURIComponent(
+          searchQueryString
+        )}&page=${page}&limit=${limit}`,
         {
           method: "GET",
           headers: {
@@ -94,7 +94,7 @@ export default function SearchBlogs() {
                         title: blog.title,
                         content: blog.content,
                         tags: blog.tags,
-                        codeTemplates: blog.codeTemplates || [],
+                        codeTemplates: Array.isArray(blog.codeTemplates) ? blog.codeTemplates : [],
                       })
                     }
                   >
@@ -151,22 +151,20 @@ export default function SearchBlogs() {
               <button
                 disabled={loadingQuery || page === 1}
                 onClick={() => handlePageChange(page - 1)}
-                className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 ${
-                  page === 1
+                className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 ${page === 1
                     ? "cursor-not-allowed opacity-50"
                     : "hover:opacity-80"
-                }`}
+                  }`}
               >
                 Previous
               </button>
               <button
                 disabled={loadingQuery || blogs.length < limit}
                 onClick={() => handlePageChange(page + 1)}
-                className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 ${
-                  blogs.length < limit
+                className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 ${blogs.length < limit
                     ? "cursor-not-allowed opacity-50"
                     : "hover:opacity-80"
-                }`}
+                  }`}
               >
                 Next
               </button>
