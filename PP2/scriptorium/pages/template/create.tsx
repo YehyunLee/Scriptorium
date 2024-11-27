@@ -5,6 +5,8 @@ import "highlight.js/styles/vs2015.css";
 
 import { EditorWrapper } from "@/components/EditorWrapper";
 import { SUPPORTED_LANGUAGES } from "@/constants/languages";
+import { CodeRunner } from "@/components/CodeRunner";
+
 
 export default function CreateTemplate() {
   const [tags, setTags] = useState<string[]>([]);
@@ -35,18 +37,22 @@ export default function CreateTemplate() {
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + "/api/code_template/user/create_template", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          ...formData,
-          tags,
-          language,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
+          "/api/code_template/user/create_template",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            ...formData,
+            tags,
+            language,
+          }),
+        }
+      );
 
       if (response.ok) {
         setResponseMessage({
@@ -144,6 +150,13 @@ export default function CreateTemplate() {
                 className="w-full px-3 py-2 bg-navy/50 border border-gold/30 rounded-md text-white"
                 placeholder="Explain your template"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gold mb-1">
+                Test Run
+              </label>
+              <CodeRunner code={formData.content} language={language} />
             </div>
 
             {responseMessage.message && (

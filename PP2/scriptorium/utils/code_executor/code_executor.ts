@@ -33,8 +33,6 @@ export function codeExecutor(
     const { uid, gid } = os.userInfo();
     console.log(`User ID: ${uid}, Group ID: ${gid}`);
 
-    console.log("Full path: ", fullPath);
-
     // Write source code to a temporary file
     fs.writeFileSync(fullPath, sourceCode);
 
