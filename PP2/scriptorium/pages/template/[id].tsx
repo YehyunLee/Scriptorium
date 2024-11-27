@@ -6,6 +6,7 @@ import { useAuth } from "@/utils/contexts/auth_context";
 import { SUPPORTED_LANGUAGES } from "@/constants/languages";
 import { TagInput } from "@/components/TagInput";
 import Link from "next/link";
+import { CodeRunner } from "@/components/CodeRunner";
 
 // Credit to Yehyun, worked with Github AutoComplete to improve the UI
 export default function TemplateDetail() {
@@ -240,14 +241,13 @@ export default function TemplateDetail() {
 
   return (
     <div className="min-h-screen bg-navy p-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-8xl mx-auto">
         {editMessage.text && (
           <div
-            className={`mb-4 p-3 rounded-md ${
-              editMessage.type === "success"
+            className={`mb-4 p-3 rounded-md ${editMessage.type === "success"
                 ? "bg-green-500/10 text-green-500 border border-green-500"
                 : "bg-red-500/10 text-red-500 border border-red-500"
-            }`}
+              }`}
           >
             {editMessage.text}
           </div>
@@ -564,19 +564,33 @@ export default function TemplateDetail() {
               {isEditing ? editFormData.language : template.language}
             </span>
           </div>
-          <div className="h-[600px]">
-            <EditorWrapper
-              value={isEditing ? editFormData.content || "" : template.content}
-              onChange={(value) =>
-                isEditing &&
-                setEditFormData({ ...editFormData, content: value })
-              }
-              language={
-                isEditing ? editFormData.language || "" : template.language
-              }
-              editorType={editorType}
-              readOnly={!isEditing}
-            />
+
+          {/* Grid container for editor and code runner */}
+          <div className="grid grid-cols-[2fr,1fr] gap-4">
+            {/* Editor column */}
+            <div className="h-[600px]">
+              <EditorWrapper
+                value={isEditing ? editFormData.content || "" : template.content}
+                onChange={(value) =>
+                  isEditing &&
+                  setEditFormData({ ...editFormData, content: value })
+                }
+                language={
+                  isEditing ? editFormData.language || "" : template.language
+                }
+                editorType={editorType}
+                readOnly={!isEditing}
+              />
+            </div>
+
+            {/* Code Runner column */}
+            <div className="border-l border-gold/30 p-4">
+              <h2 className="text-xl font-bold text-gold mb-4">Run Code</h2>
+              <CodeRunner
+                code={isEditing ? editFormData.content || "" : template.content}
+                language={isEditing ? editFormData.language || "" : template.language}
+              />
+            </div>
           </div>
         </div>
 

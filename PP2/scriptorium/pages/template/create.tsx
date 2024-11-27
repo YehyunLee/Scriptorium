@@ -131,6 +131,19 @@ export default function CreateTemplate() {
 
         <div className="w-80 border-l border-gold/30 bg-navy/50 p-4 overflow-y-auto">
           <div className="space-y-6">
+
+            {responseMessage.message && (
+              <div
+                className={`p-3 rounded ${
+                  responseMessage.type === "success"
+                    ? "bg-green-500/10 text-green-500 border border-green-500"
+                    : "bg-red-500/10 text-red-500 border border-red-500"
+                }`}
+              >
+                {responseMessage.message}
+              </div>
+            )}
+            
             <div>
               <label className="block text-sm font-medium text-gold mb-1">
                 Tags
@@ -159,17 +172,6 @@ export default function CreateTemplate() {
               <CodeRunner code={formData.content} language={language} />
             </div>
 
-            {responseMessage.message && (
-              <div
-                className={`p-3 rounded ${
-                  responseMessage.type === "success"
-                    ? "bg-green-500/10 text-green-500 border border-green-500"
-                    : "bg-red-500/10 text-red-500 border border-red-500"
-                }`}
-              >
-                {responseMessage.message}
-              </div>
-            )}
           </div>
         </div>
       </div>
