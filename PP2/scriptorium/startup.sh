@@ -160,7 +160,7 @@ fi
 
 echo "Starting Docker..."
 sudo systemctl start docker || { echo "Failed to start Docker."; }
-echo "Docker started successfully."
+echo "Docker started successfully or assume it's manually started."
 
 # Run docker setup script
 echo "Running Docker setup script..."

@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import os from "os";
 import { exec } from "child_process";  // We'll use this to run docker commands
+import { SUPPORTED_LANGUAGES } from "@/constants/languages";
 
 // Change in codeExecutor
 export function codeExecutor(
@@ -12,6 +13,19 @@ export function codeExecutor(
     outputHandler
 ) {
   return new Promise((resolve, reject) => {
+
+    // Convert name language to id language
+    // Language might be given as either name or id
+    // We want to ensure that it's always the id
+    if (typeof language === "string") {
+      const languageObj = SUPPORTED_LANGUAGES.find(
+        (lang) => lang.name === language
+      );
+      if (languageObj) {
+        language = languageObj.id;
+      }
+    }
+
     const tempDir = os.tmpdir(); // Temporary directory for the source code
     const tempFile = createTempFile(language, sourceCode);
     const fullPath = path.join(tempDir, tempFile);
@@ -85,15 +99,50 @@ export function codeExecutor(
 // Mapping languages to Docker images and commands
 export function mapLanguageToDocker(language, filePath) {
   const dockerMap = {
-    Python: {
+    python: {
       image: "python_executor", // Docker image for Python
       runCmd: "python3 /usr/src/app/temp.py", // Command to run inside the container
     },
-    Java: {
-      image: "java_executor", // Docker image for Java
-      runCmd: "java /usr/src/app/Main", // Command to run inside the container
+    java: {
+      image: "java_executor",
+      runCmd: "java Main",
     },
-    // Add more languages as necessary
+    javascript: {
+      image: "javascript_executor",
+      runCmd: "node /usr/src/app/temp.js",
+    },
+    cpp: {
+      image: "cpp_executor",
+      runCmd: "sh -c 'g++ -o temp.out /usr/src/app/temp.cpp && ./temp.out'",
+    },
+    c: {
+      image: "c_executor",
+      runCmd: "sh -c 'gcc -o temp.out /usr/src/app/temp.c && ./temp.out'",
+    },
+    ruby: {
+      image: "ruby_executor",
+      runCmd: "ruby /usr/src/app/temp.rb",
+    },
+    csharp: {
+      image: "csharp_executor",
+      runCmd: "dotnet run",
+    },
+    php: {
+      image: "php_executor",
+      runCmd: "php /usr/src/app/temp.php",
+    },
+    go: {
+      image: "go_executor",
+      runCmd: "go run /usr/src/app/temp.go",
+    },
+    swift: {
+      image: "swift_executor",
+      runCmd: "swift /usr/src/app/temp.swift",
+    },
+    assembly: {
+      image: "assembly_executor",
+      runCmd: "sh -c 'nasm -f elf64 /usr/src/app/temp.asm && ld -o temp /usr/src/app/temp.o && ./temp'",
+    },
   };
 
   if (!dockerMap[language]) {
@@ -105,11 +154,17 @@ export function mapLanguageToDocker(language, filePath) {
 
 export function createTempFile(language, sourceCode) {
   const extensions = {
-    C: "c",
-    "C++": "cpp",
-    Java: "java",
-    Python: "py",
-    JavaScript: "js",
+    c: "c",
+    cpp: "cpp",
+    java: "java",
+    python: "py",
+    javascript: "js",
+    ruby: "rb",
+    csharp: "cs",
+    php: "php",
+    go: "go",
+    swift: "swift",
+    assembly: "asm",
   };
 
   if (!extensions[language]) {
