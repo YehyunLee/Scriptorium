@@ -253,22 +253,18 @@ export default function TemplateDetail() {
           </div>
         )}
 
-        <div className="bg-navy/50 border border-gold/30 rounded-lg p-6 mb-8">
-          <div className="flex justify-between items-start mb-6">
-            <div>
+<div className="bg-navy/80 border-b border-gold/30 p-4">
+  <div className="max-w-7xl mx-auto space-y-4">
+         <div>
               {isEditing ? (
                 <input
                   type="text"
                   value={editFormData.title}
-                  onChange={(e) =>
-                    setEditFormData({ ...editFormData, title: e.target.value })
-                  }
-                  className="text-3xl font-bold bg-navy/50 border border-gold/30 rounded-md px-2 py-1 text-gold mb-2"
+          onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+          className="text-2xl sm:text-3xl font-bold bg-navy/50 border border-gold/30 rounded-md px-2 py-1 text-gold"
                 />
               ) : (
-                <h1 className="text-3xl font-bold text-gold mb-2">
-                  {template.title}
-                </h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gold">{template.title}</h1>
               )}
               <p className="text-white/60">
                 By {template.author?.firstName} {template.author?.lastName} •
@@ -315,20 +311,20 @@ export default function TemplateDetail() {
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-4">
+    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+
               <select
                 value={editorType}
-                onChange={(e) =>
-                  setEditorType(e.target.value as "monaco" | "highlight")
-                }
-                className="bg-navy/50 text-white px-3 py-2 border border-gold/30 rounded-md"
+        onChange={(e) => setEditorType(e.target.value as "monaco" | "highlight")}
+        className="w-full sm:w-auto bg-navy/50 text-white px-3 py-2 border border-gold/30 rounded-md"
               >
                 <option value="monaco">Monaco Editor</option>
                 <option value="highlight">Simple Editor</option>
               </select>
 
+      <div className="flex gap-2 w-full sm:w-auto">
               {isOwner && (
-                <div className="flex items-center gap-2">
+          <div className="flex gap-2">
                   {isEditing ? (
                     <>
                       <button
@@ -499,7 +495,7 @@ export default function TemplateDetail() {
             </div>
 
             {/* Tags and Language Column */}
-            <div className="space-y-4">
+            <div className="space-y-4 mb-4">
               <div>
                 <label className="block text-sm font-medium text-gold mb-2">
                   Tags
@@ -621,7 +617,9 @@ export default function TemplateDetail() {
               </div>
             </div>
           </div>
+          
         )}
+        </div>
       </div>
     </div>
   );

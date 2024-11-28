@@ -117,8 +117,10 @@ export default function CreateTemplate() {
         </div>
       </div>
 
-      <div className="flex h-[calc(100vh-64px)]">
-        <div className="flex-1 h-full bg-navy/50">
+
+         <div className="flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-64px)]">
+    <div className="h-[400px] lg:h-full lg:flex-1 bg-navy/50">
+ 
           <EditorWrapper
             value={formData.content}
             onChange={(newValue) =>
@@ -129,7 +131,7 @@ export default function CreateTemplate() {
           />
         </div>
 
-        <div className="w-80 border-l border-gold/30 bg-navy/50 p-4 overflow-y-auto">
+    <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-gold/30 bg-navy/50 p-4 overflow-y-auto">
           <div className="space-y-6">
 
             {responseMessage.message && (
