@@ -48,6 +48,8 @@ const Blog = ({
   const [blogRating, setBlogRating] = useState<number>(0);
   const [currentUserCommentRatings, setCurrentUserCommentRatings] =
     useState<any>({});
+  const [showReportInput, setShowReportInput] = useState<number | boolean>(false);
+  const [reportReason, setReportReason] = useState("");
 
   useEffect(() => {
     setAuthToken(localStorage.getItem("accessToken"));
@@ -56,6 +58,35 @@ const Blog = ({
       loadComments();
     }
   }, [id]);
+
+    const handleReport = async () => {
+        if (!reportReason.trim()) return alert("Please provide a reason.");
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}/api/report`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${authToken}`,
+                },
+                body: JSON.stringify({
+                    reason: reportReason,
+                    blogPostId: id,
+                }),
+            });
+
+            if (response.ok) {
+                alert("Report submitted successfully.");
+                setShowReportInput(false);
+                setReportReason("");
+            } else {
+                alert("Failed to submit the report.");
+            }
+        } catch (error) {
+            console.error("Error submitting report:", error);
+            alert("An error occurred. Please try again.");
+        }
+    };
 
   const loadBlogRating = async () => {
     try {
@@ -210,6 +241,36 @@ const Blog = ({
       setCommentsError(`Error: ${err.message}`);
     }
   };
+
+  const handleCommentReport = async (commentId: string) => {
+    if (!reportReason.trim()) return alert("Please provide a reason.");
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}/api/report`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({
+          reason: reportReason,
+          commentId,
+        }),
+      });
+
+      if (response.ok) {
+        alert("Report submitted successfully.");
+        setShowReportInput(-1); // Close the input field
+        setReportReason("");
+      } else {
+        alert("Failed to submit the report.");
+      }
+    } catch (error) {
+      console.error("Error submitting report:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
 
   const handleVote = async (index: number, change: number, isBlog: boolean) => {
     let actualChange = change;
@@ -399,6 +460,35 @@ const Blog = ({
           </div>
         </div>
 
+        <div className="mt-4">
+          {isAuthenticated && user?.id !== authorId && (
+              <div>
+                <button
+                    onClick={() => setShowReportInput(!showReportInput)}
+                    className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700"
+                >
+                  Report
+                </button>
+                {showReportInput && (
+                    <div className="mt-2">
+                <textarea
+                    className="w-full p-2 border rounded"
+                    placeholder="Enter reason for reporting"
+                    value={reportReason}
+                    onChange={(e) => setReportReason(e.target.value)}
+                />
+                      <button
+                          onClick={handleReport}
+                          className="bg-blue-500 text-white py-1 px-3 rounded mt-2 hover:bg-blue-600"
+                      >
+                        Submit Report
+                      </button>
+                    </div>
+                )}
+              </div>
+          )}
+        </div>
+
         {user && authorId == user.id && (
           <div className="flex justify-end mt-12">
             <button
@@ -455,6 +545,36 @@ const Blog = ({
                     </button>
                   </div>
                   <p>{comment.content}</p>
+                      {/* Report button */}
+                      {isAuthenticated && user?.id !== comment.authorId && (
+                          <div>
+                            <button
+                                onClick={() => {
+                                  setShowReportInput(index);
+                                  setReportReason("");
+                                }}
+                                className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700"
+                            >
+                              Report Comment
+                            </button>
+                            {showReportInput === index && (
+                                <div className="mt-2">
+                          <textarea
+                              className="w-full p-2 border rounded"
+                              placeholder="Enter reason for reporting"
+                              value={reportReason}
+                              onChange={(e) => setReportReason(e.target.value)}
+                          />
+                                  <button
+                                      onClick={() => handleCommentReport(comment.id)}
+                                      className="bg-blue-500 text-white py-1 px-3 rounded mt-2 hover:bg-blue-600"
+                                  >
+                                    Submit Report
+                                  </button>
+                                </div>
+                            )}
+                          </div>
+                      )}
                 </li>
               ))
             ) : loadingComments ? (
