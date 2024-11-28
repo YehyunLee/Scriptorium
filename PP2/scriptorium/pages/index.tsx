@@ -13,6 +13,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+// This whole part was made by AI
 export default function Home() {
   return (
     <div
