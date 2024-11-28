@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <div
       className={`${geistSans.variable} ${geistMono.variable} 
-      bg-navy min-h-screen grid grid-rows-[20px_1fr_20px] 
+      bg-lightBg dark:bg-darkBg text-navy dark:text-gold min-h-screen grid grid-rows-[20px_1fr_20px] 
       items-center justify-items-center p-8 pb-20 gap-16 sm:p-20`}
     >
       <main className="flex flex-col gap-12 row-start-2 items-center">

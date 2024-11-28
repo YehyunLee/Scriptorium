@@ -32,7 +32,7 @@ export default function SearchTemplates() {
   }, [search, page]);
 
   return (
-    <div className="min-h-screen bg-navy pt-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-lightBg dark:bg-darkBg text-navy dark:text-gold pt-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <input

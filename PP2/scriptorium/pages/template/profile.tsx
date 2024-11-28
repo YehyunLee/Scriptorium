@@ -55,7 +55,7 @@ export default function SearchTemplates() {
 
   // This part was done by Github Copilot to redesign the UI of the page
   return (
-    <div className="min-h-screen bg-navy p-8">
+    <div className="min-h-screen bg-lightBg dark:bg-darkBg text-navy dark:text-gold p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col space-y-8">
           {/* Search Header */}

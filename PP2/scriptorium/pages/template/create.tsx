@@ -74,7 +74,7 @@ export default function CreateTemplate() {
   };
 
   return (
-    <div className="min-h-screen bg-navy">
+    <div className="min-h-screen bg-lightBg dark:bg-darkBg text-navy dark:text-gold">
       <div className="bg-navy/80 border-b border-gold/30 p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4 flex-1">

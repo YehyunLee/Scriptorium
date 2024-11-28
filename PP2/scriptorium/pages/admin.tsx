@@ -87,7 +87,7 @@ export default function AdminPage() {
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div className="min-h-screen bg-navy py-12">
+        <div className="min-h-screen bg-lightBg dark:bg-darkBg text-navy dark:text-gold py-12">
             <div className="max-w-6xl mx-auto px-4">
                 <h1 className="text-3xl text-gold mb-6">Reported Content</h1>
 

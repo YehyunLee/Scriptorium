@@ -125,7 +125,7 @@ export default function TemplateDetail() {
   // Add ForkModal component
   const ForkModal = () => (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-navy border border-gold/30 rounded-lg p-6 max-w-2xl w-full mx-4">
+      <div className="bg-lightBg dark:bg-darkBg text-navy dark:text-gold border border-gold/30 rounded-lg p-6 max-w-2xl w-full mx-4">
         <h3 className="text-xl font-bold text-gold mb-4">Fork Template</h3>
 
         <div className="space-y-4">
