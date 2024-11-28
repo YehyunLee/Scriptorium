@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useAuth } from "../utils/contexts/auth_context";
+import ThemeToggle from "./ThemeToggle";
 
 
 // Reusing some code from Yehyun's exercise 9
@@ -14,6 +15,7 @@ const NavBar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
   const { isAuthenticated, user, logout } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false); // Track if user is an admin
 
   // Handle scroll effect
   useEffect(() => {
@@ -33,6 +35,28 @@ const NavBar = () => {
       console.error("Logout failed:", error);
     }
   };
+
+  useEffect(() => {
+    const fetchAdminStatus = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` + "/api/admin/isAdmin", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        console.log(data)
+        setIsAdmin(data.isAdmin);
+      } catch (error) {
+        console.error("Error fetching admin status:", error);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchAdminStatus();
+    }
+  }, [isAuthenticated]);
 
   const isActive = (path: string) => router.pathname === path;
 
@@ -78,6 +102,7 @@ const NavBar = () => {
                 {item.label}
               </Link>
             ))}
+            <ThemeToggle />
 
             {/* Auth Section */}
             {!isAuthenticated ? (
@@ -133,6 +158,9 @@ const NavBar = () => {
                       { href: "/profile", label: "My Profile" },
                       { href: "/template/profile", label: "My Templates" },
                       { href: "/blog/profile", label: "My Blogs" },
+                      ...(isAdmin // Optional role check
+                          ? [{ href: "/admin", label: "Admin" }]
+                          : []),
                     ].map((item) => (
                       <Link
                         key={item.href}
@@ -207,6 +235,9 @@ const NavBar = () => {
                   { href: "/profile", label: "My Profile" },
                   { href: "/template/profile", label: "My Templates" },
                   { href: "/blog/profile", label: "My Blogs" },
+                  ...(isAdmin // Optional role check
+                      ? [{ href: "/admin", label: "Admin" }]
+                      : []),
                 ]
               : [
                   { href: "/login", label: "Login" },

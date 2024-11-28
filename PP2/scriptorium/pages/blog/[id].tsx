@@ -20,8 +20,67 @@ export default function BlogPage() {
   const [commentsLimit] = useState<number>(10);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentUserCommentRatings, setCurrentUserCommentRatings] =
-    useState<any>({});
+    const [currentUserCommentRatings, setCurrentUserCommentRatings] = useState<any>({});
+    const [showReportInput, setShowReportInput] = useState(false);
+    const [reportReason, setReportReason] = useState("");
+
+    const handleReport = async () => {
+        if (!reportReason.trim()) return alert("Please provide a reason.");
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}/api/report`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${authToken}`,
+                },
+                body: JSON.stringify({
+                    reason: reportReason,
+                    blogPostId: id,
+                }),
+            });
+
+            if (response.ok) {
+                alert("Report submitted successfully.");
+                setShowReportInput(false);
+                setReportReason("");
+            } else {
+                alert("Failed to submit the report.");
+            }
+        } catch (error) {
+            console.error("Error submitting report:", error);
+            alert("An error occurred. Please try again.");
+        }
+    };
+
+    const handleCommentReport = async (commentId: string) => {
+        if (!reportReason.trim()) return alert("Please provide a reason.");
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}/api/report`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${authToken}`,
+                },
+                body: JSON.stringify({
+                    reason: reportReason,
+                    commentId,
+                }),
+            });
+
+            if (response.ok) {
+                alert("Report submitted successfully.");
+                setShowReportInput(-1); // Close the input field
+                setReportReason("");
+            } else {
+                alert("Failed to submit the report.");
+            }
+        } catch (error) {
+            console.error("Error submitting report:", error);
+            alert("An error occurred. Please try again.");
+        }
+    };
 
   useEffect(() => {
     setAuthToken(localStorage.getItem("accessToken"));
@@ -257,18 +316,9 @@ export default function BlogPage() {
     }
   };
 
-  if (loading)
-    return (
-      <div className="min-h-screen bg-navy p-12 text-gold">Loading...</div>
-    );
-  if (error)
-    return (
-      <div className="min-h-screen bg-navy p-12 text-red-500">{error}</div>
-    );
-  if (!blog)
-    return (
-      <div className="min-h-screen bg-navy p-12 text-gold">Blog not found</div>
-    );
+    if (loading) return <div className="min-h-screen bg-navy p-12 text-gold">Loading...</div>;
+    if (error) return <div className="min-h-screen bg-navy p-12 text-red-500">{error}</div>;
+    if (!blog) return <div className="min-h-screen bg-navy p-12 text-gold">Blog not found</div>;
 
   return (
     <div className="min-h-screen bg-navy p-12">
@@ -346,7 +396,32 @@ export default function BlogPage() {
                   )}
                 </p>
               </div>
-
+                            {user && blog.authorId !== user.id && (
+                                <div className="mt-4">
+                                    <button
+                                        onClick={() => setShowReportInput(!showReportInput)}
+                                        className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700"
+                                    >
+                                        Report Blog Post
+                                    </button>
+                                    {showReportInput && (
+                                        <div className="mt-2">
+                                            <textarea
+                                                className="w-full p-2 border rounded"
+                                                placeholder="Enter reason for reporting"
+                                                value={reportReason}
+                                                onChange={(e) => setReportReason(e.target.value)}
+                                            />
+                                            <button
+                                                onClick={handleReport}
+                                                className="bg-blue-500 text-white py-1 px-3 rounded mt-2 hover:bg-blue-600"
+                                            >
+                                                Submit Report
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
               {user && blog.authorId === user.id && (
                 <div className="mt-8">
                   <button
@@ -425,21 +500,17 @@ export default function BlogPage() {
                       <div className="flex flex-col items-center">
                         <button
                           onClick={() => handleVote(index, 1, false)}
-                          className={`${
-                            currentUserCommentRatings[comment.id] === 1
+                                                    className={`${currentUserCommentRatings[comment.id] === 1
                               ? "text-gold"
                               : "text-white"
                           } hover:text-gold/80`}
                         >
                           ▲
                         </button>
-                        <span className="text-gold">
-                          {comment.averageRate || 0}
-                        </span>
+                                                <span className="text-gold">{comment.averageRate || 0}</span>
                         <button
                           onClick={() => handleVote(index, -1, false)}
-                          className={`${
-                            currentUserCommentRatings[comment.id] === -1
+                                                    className={`${currentUserCommentRatings[comment.id] === -1
                               ? "text-gold"
                               : "text-white"
                           } hover:text-gold/80`}
@@ -453,25 +524,50 @@ export default function BlogPage() {
                           {new Date(comment.createdAt).toLocaleDateString()}
                         </p>
                       </div>
+                                            {user && comment.authorId !== user.id && (
+                                                <div className="mt-2">
+                                                    <button
+                                                        onClick={() => {
+                                                            setShowReportInput(comment.id); // Identify comment being reported
+                                                            setReportReason("");
+                                                        }}
+                                                        className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700"
+                                                    >
+                                                        Report Comment
+                                                    </button>
+                                                    {showReportInput === comment.id && (
+                                                        <div className="mt-2">
+        <textarea
+            className="w-full p-2 border rounded"
+            placeholder="Enter reason for reporting"
+            value={reportReason}
+            onChange={(e) => setReportReason(e.target.value)}
+        />
+                                                            <button
+                                                                onClick={() => handleCommentReport(comment.id)}
+                                                                className="bg-blue-500 text-white py-1 px-3 rounded mt-2 hover:bg-blue-600"
+                                                            >
+                                                                Submit Report
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-gold/50">
-                  No comments yet. Be the first to comment!
-                </p>
+                                <p className="text-gold/50">No comments yet. Be the first to comment!</p>
               )}
 
               {/* Pagination */}
               {comments.length > 0 && (
                 <div className="mt-6 flex justify-between">
                   <button
-                    onClick={() =>
-                      setCommentsPage(Math.max(1, commentsPage - 1))
-                    }
+                                        onClick={() => setCommentsPage(Math.max(1, commentsPage - 1))}
                     disabled={commentsPage === 1}
-                    className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 ${
-                      commentsPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                                        className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 ${commentsPage === 1 ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
                     Previous
@@ -479,10 +575,7 @@ export default function BlogPage() {
                   <button
                     onClick={() => setCommentsPage(commentsPage + 1)}
                     disabled={comments.length < commentsLimit}
-                    className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 ${
-                      comments.length < commentsLimit
-                        ? "opacity-50 cursor-not-allowed"
-                        : ""
+                                        className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 ${comments.length < commentsLimit ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
                     Next
