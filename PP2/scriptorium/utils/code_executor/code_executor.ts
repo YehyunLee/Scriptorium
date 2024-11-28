@@ -5,6 +5,13 @@ import os from "os";
 import { exec } from "child_process";  // We'll use this to run docker commands
 import { SUPPORTED_LANGUAGES } from "@/constants/languages";
 
+const MEMORY_LIMIT =
+    process.env.MEMORY_LIMIT || "256m";
+const CPU_LIMIT =
+    process.env.CPU_LIMIT || "0.5";
+const PROG_TIMEOUT =
+    process.env.PROG_TIMEOUT || "50";
+
 // Change in codeExecutor
 export function codeExecutor(
     sourceCode: string,
@@ -19,7 +26,7 @@ export function codeExecutor(
     // We want to ensure that it's always the id
     if (typeof language === "string") {
       const languageObj = SUPPORTED_LANGUAGES.find(
-        (lang) => lang.name === language
+          (lang) => lang.name === language
       );
       if (languageObj) {
         language = languageObj.id;
@@ -45,6 +52,8 @@ export function codeExecutor(
         "docker", "run", "--rm", "-i", // -i for interactive mode
         "--user", `${uid}:${gid}`,
         "-v", `${fullPath}:/usr/src/app/${tempFile}`, // Mount the code file inside the container
+        "--memory", MEMORY_LIMIT,
+        "--cpus", CPU_LIMIT,
         dockerDetails.image, // Docker image name
         "/bin/sh", "-c", dockerDetails.runCmd // Command to run inside the container
       ];
@@ -58,6 +67,11 @@ export function codeExecutor(
         dockerProcess.stdin.write(userInput);
       }
       dockerProcess.stdin.end();
+
+      const timeout = setTimeout(() => {
+        dockerProcess.kill();
+        reject("Execution timed out.");
+      }, PROG_TIMEOUT * 100);
 
       let outputData = "";
 
@@ -81,6 +95,7 @@ export function codeExecutor(
       });
 
       dockerProcess.on("close", (exitCode) => {
+        clearTimeout(timeout);
         // Clean up after the container finishes execution
         if (exitCode === 0) {
           resolve(outputData.trim());
