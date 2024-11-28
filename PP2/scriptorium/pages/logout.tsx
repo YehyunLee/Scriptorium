@@ -27,7 +27,7 @@ export default function Logout() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-navy flex items-center justify-center">
+      <div className="min-h-screen bg-lightBg dark:bg-darkBg text-navy dark:text-gold flex items-center justify-center">
         <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-md">
           {error}
         </div>

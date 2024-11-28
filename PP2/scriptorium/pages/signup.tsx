@@ -48,7 +48,7 @@ export default function Signup() {
   // ...prev does a shallow copy of the previous state and then updates the value of the input field that was changed.
 
   return (
-    <div className="flex justify-center pt-12 bg-navy">
+    <div className="flex justify-center pt-12 bg-lightBg dark:bg-darkBg text-navy dark:text-gold">
       <div className="max-w-md w-full space-y-8 p-8 bg-navy/50 rounded-lg border border-gold/30">
         <div>
           <h2 className="text-center text-3xl font-extrabold text-gold">

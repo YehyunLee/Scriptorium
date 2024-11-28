@@ -36,7 +36,7 @@ export default function Login() {
 
   // in tailwind, bg-navy/50 is a shorthand for bg-navy with 50% opacity
   return (
-    <div className="min-h-screren flex items-center justify-center bg-navy pt-12">
+    <div className="min-h-screren bg-lightBg dark:bg-darkBg text-navy dark:text-gold flex items-center justify-center bg-navy pt-12">
       <div className="max-w-md w-full space-y-8 p-8 bg-navy/50 rounded-lg border border-gold/30">
         <div>
           <h2 className="text-center text-3xl font-extrabold text-gold">

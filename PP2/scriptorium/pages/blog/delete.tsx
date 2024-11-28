@@ -92,7 +92,7 @@ export default function DeleteBlog() {
   };
 
   return (
-    <div className="min-h-screen bg-navy p-12">
+    <div className="min-h-screen bg-lightBg dark:bg-darkBg text-navy dark:text-gold p-12">
         <div className="max-w-3xl mx-auto px-4">
             <div className="bg-navy/50 border border-gold/30 rounded-lg shadow-lg p-6">
                 <h2 className="text-2xl font-bold mb-6 text-gold">

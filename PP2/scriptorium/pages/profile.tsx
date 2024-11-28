@@ -71,7 +71,7 @@ export default function Profile() {
 
   if (isLoading)
     return (
-      <div className="min-h-screen bg-navy flex items-center justify-center">
+      <div className="min-h-screen bg-lightBg dark:bg-darkBg text-navy dark:text-gold flex items-center justify-center">
         <div className="text-gold">Loading...</div>
       </div>
     );
@@ -79,7 +79,7 @@ export default function Profile() {
   if (!profile) return null;
 
   return (
-    <div className="min-h-screen bg-navy py-12">
+    <div className="min-h-screen bg-lightBg dark:bg-darkBg text-navy dark:text-gold py-12">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-navy/50 border border-gold/30 rounded-lg shadow-lg">
           <div className="px-4 py-5 sm:p-6">
