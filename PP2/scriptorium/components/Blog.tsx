@@ -61,7 +61,7 @@ const Blog = ({
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
-        `/api/blog/${id}/get_rates`,
+          `/api/blog/${id}/get_rates`,
         {
           method: "GET",
           headers: {
@@ -120,7 +120,7 @@ const Blog = ({
           const averageCommentRate = await getCommentRating(comment.id);
           return {
             ...comment,
-            averageRate: averageCommentRate
+            averageRate: averageCommentRate,
           };
         })
       );
@@ -133,12 +133,11 @@ const Blog = ({
     }
   };
 
-
   const getCommentRating = async (commentId: string) => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
-        `/api/comments/${commentId}/get_rates`,
+          `/api/comments/${commentId}/get_rates`,
         {
           method: "GET",
           headers: {
@@ -174,8 +173,6 @@ const Blog = ({
       return 0;
     }
   };
-
-
 
   const handleAddComment = async () => {
     if (newComment.trim() === "" || !isAuthenticated) {
@@ -213,7 +210,6 @@ const Blog = ({
       setCommentsError(`Error: ${err.message}`);
     }
   };
-
 
   const handleVote = async (index: number, change: number, isBlog: boolean) => {
     let actualChange = change;
@@ -254,7 +250,7 @@ const Blog = ({
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
-          `/api/blog/${id}/add_rate`,
+            `/api/blog/${id}/add_rate`,
           {
             method: "POST",
             headers: {
@@ -282,7 +278,7 @@ const Blog = ({
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
-          `/api/comments/${commentId}/add_rate`,
+            `/api/comments/${commentId}/add_rate`,
           {
             method: "POST",
             headers: {
@@ -320,7 +316,6 @@ const Blog = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
       <div className="bg-navy border border-gold/30 rounded-lg shadow-lg pt-2 pb-6 pl-6 pr-2 max-w-3xl w-full">
-
         <div className="w-full flex justify-between items-center mb-4">
           <Link
             href={`/blog/${id}`}
@@ -367,10 +362,15 @@ const Blog = ({
             {/* Content is extremly long */}
             {/* Wrap content in div to prevent markdown from rendering */}
             {/* Ensure it does not go beyond the border, if so next line */}
-            <div className="mt-4 text-gold/50 whitespace-pre-wrap">
-              {content}
-            </div>          
-
+            <textarea
+              id="content"
+              name="content"
+              value={content}
+              placeholder="Write your blog content"
+              rows={6}
+              cols={100}
+              className="mt-4 w-full px-3 py-2 bg-navy border border-gold/30 rounded-md text-white focus:ring-gold focus:border-gold"
+            />
 
             <div className="mt-4 text-sm text-gold/50">
               <p>
@@ -430,7 +430,7 @@ const Blog = ({
                       onClick={() => handleVote(index, 1, false)}
                       className={
                         (currentUserCommentRatings[comment.id] &&
-                          currentUserCommentRatings[comment.id] == 1
+                        currentUserCommentRatings[comment.id] == 1
                           ? "text-gold hover:text-gold/80"
                           : "text-white hover:opacity-80") +
                         " text-xl hover:text-gold/80 focus:outline-none"
@@ -445,7 +445,7 @@ const Blog = ({
                       onClick={() => handleVote(index, -1, false)}
                       className={
                         (currentUserCommentRatings[comment.id] &&
-                          currentUserCommentRatings[comment.id] == -1
+                        currentUserCommentRatings[comment.id] == -1
                           ? "text-gold hover:text-gold/80"
                           : "text-white hover:opacity-80") +
                         " text-xl hover:text-gold/80 focus:outline-none"
