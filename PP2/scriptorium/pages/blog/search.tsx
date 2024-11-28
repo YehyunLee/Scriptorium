@@ -1,8 +1,8 @@
 import Blog from "@/components/Blog";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from 'next/router';
-
+import { useRouter } from "next/router";
+import { truncateText } from "@/utils/textUtils";
 
 export default function SearchBlogs() {
   const [searchQueryString, setSearchQueryString] = useState<string>("");
@@ -14,7 +14,6 @@ export default function SearchBlogs() {
   const [selectedBlog, setSelectedBlog] = useState<any>(null);
   const router = useRouter();
 
-
   const handleSearch = async () => {
     setLoadingQuery(true);
     setError(null);
@@ -22,9 +21,9 @@ export default function SearchBlogs() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_APP_API_ENDPOINT}` +
-        `/api/blog?search=${encodeURIComponent(
-          searchQueryString
-        )}&page=${page}&limit=${limit}`,
+          `/api/blog?search=${encodeURIComponent(
+            searchQueryString
+          )}&page=${page}&limit=${limit}`,
         {
           method: "GET",
           headers: {
@@ -59,7 +58,6 @@ export default function SearchBlogs() {
     handleSearch();
   };
 
-
   const handleBlogClick = (blog: any) => {
     setSelectedBlog({
       id: blog.id,
@@ -67,7 +65,9 @@ export default function SearchBlogs() {
       title: blog.title,
       content: blog.content,
       tags: blog.tags,
-      codeTemplates: Array.isArray(blog.codeTemplates) ? blog.codeTemplates : [],
+      codeTemplates: Array.isArray(blog.codeTemplates)
+        ? blog.codeTemplates
+        : [],
     });
   };
 
@@ -107,9 +107,15 @@ export default function SearchBlogs() {
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-lg font-bold text-gold">{blog.title}</h3>
-                        <p className="text-sm text-gold/90">{blog.content}</p>
-                        <div className="text-sm text-gold/50 mt-1">Tags: {blog.tags}</div>
+                        <h3 className="text-lg font-bold text-gold">
+                          {blog.title}
+                        </h3>
+                        <p className="text-sm text-gold/90">
+                          {truncateText(blog.content, 25)}
+                        </p>
+                        <div className="text-sm text-gold/50 mt-1">
+                          Tags: {blog.tags}
+                        </div>
                         <div className="text-sm text-gold/50 mt-1">
                           Templates:{" "}
                           {blog.codeTemplates?.length === 0 ? (
@@ -165,20 +171,22 @@ export default function SearchBlogs() {
               <button
                 disabled={loadingQuery || page === 1}
                 onClick={() => handlePageChange(page - 1)}
-                className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 ${page === 1
-                  ? "cursor-not-allowed opacity-50"
-                  : "hover:opacity-80"
-                  }`}
+                className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 ${
+                  page === 1
+                    ? "cursor-not-allowed opacity-50"
+                    : "hover:opacity-80"
+                }`}
               >
                 Previous
               </button>
               <button
                 disabled={loadingQuery || blogs.length < limit}
                 onClick={() => handlePageChange(page + 1)}
-                className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 ${blogs.length < limit
-                  ? "cursor-not-allowed opacity-50"
-                  : "hover:opacity-80"
-                  }`}
+                className={`bg-gold text-navy py-2 px-4 rounded-md hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 ${
+                  blogs.length < limit
+                    ? "cursor-not-allowed opacity-50"
+                    : "hover:opacity-80"
+                }`}
               >
                 Next
               </button>

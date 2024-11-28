@@ -1,28 +1,23 @@
-FROM node:18-slim
+# Base image for Next.js
+FROM node:18-alpine
 
-# Install required packages
-RUN apt-get update && apt-get install -y \
-    docker.io \
-    sqlite3 \
-    dos2unix \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create app directory for the container
+# Set working directory
 WORKDIR /app
 
-# Copy all files
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the project files
 COPY . .
 
-# Convert line endings and set permissions
-RUN dos2unix startup.sh && chmod +x startup.sh \
-    dos2unix utils/code_executor/scripts/setup.sh && chmod +x utils/code_executor/scripts/setup.sh
-
-# Install dependencies and setup Docker images
-RUN ./startup.sh
-
-# Build for production
+# Build the Next.js app
 RUN npm run build
 
+# Expose the port Render will use
 EXPOSE 3000
 
-CMD ["npm", "start"]
+# Start the Next.js app
+CMD ["npm", "run", "start"]

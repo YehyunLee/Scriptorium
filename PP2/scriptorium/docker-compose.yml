@@ -1,0 +1,79 @@
+version: '3.8'
+
+# # Python
+# docker tag python_executor yehyunlee/scriptorium:python_executor
+# docker push yehyunlee/scriptorium:python_executor
+
+# # Java
+# docker tag java_executor yehyunlee/scriptorium:java_executor
+# docker push yehyunlee/scriptorium:java_executor
+
+# # JavaScript
+# docker tag javascript_executor yehyunlee/scriptorium:javascript_executor
+# docker push yehyunlee/scriptorium:javascript_executor
+
+# # C++
+# docker tag cpp_executor yehyunlee/scriptorium:cpp_executor
+# docker push yehyunlee/scriptorium:cpp_executor
+
+# # C
+# docker tag c_executor yehyunlee/scriptorium:c_executor
+# docker push yehyunlee/scriptorium:c_executor
+
+# # Ruby
+# docker tag ruby_executor yehyunlee/scriptorium:ruby_executor
+# docker push yehyunlee/scriptorium:ruby_executor
+
+# # C#
+# docker tag csharp_executor yehyunlee/scriptorium:csharp_executor
+# docker push yehyunlee/scriptorium:csharp_executor
+
+# # PHP
+# docker tag php_executor yehyunlee/scriptorium:php_executor
+# docker push yehyunlee/scriptorium:php_executor
+
+# # Go
+# docker tag go_executor yehyunlee/scriptorium:go_executor
+# docker push yehyunlee/scriptorium:go_executor
+
+# # Swift
+# docker tag swift_executor yehyunlee/scriptorium:swift_executor
+# docker push yehyunlee/scriptorium:swift_executor
+
+# # Assembly
+# docker tag assembly_executor yehyunlee/scriptorium:assembly_executor
+# docker push yehyunlee/scriptorium:assembly_executor
+
+services:
+  nextjs:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - python_executor
+      - java_executor
+  python_executor:
+    image: yehyunlee/scriptorium:python_executor
+  java_executor:
+    image: yehyunlee/scriptorium:java_executor
+  javascript_executor:
+    image: yehyunlee/scriptorium:javascript_executor
+  cpp_executor:
+    image: yehyunlee/scriptorium:cpp_executor
+  c_executor:
+    image: yehyunlee/scriptorium:c_executor
+  ruby_executor:
+    image: yehyunlee/scriptorium:ruby_executor
+  csharp_executor:
+    image: yehyunlee/scriptorium:csharp_executor
+  php_executor:
+    image: yehyunlee/scriptorium:php_executor
+  go_executor:
+    image: yehyunlee/scriptorium:go_executor
+  swift_executor:
+    image: yehyunlee/scriptorium:swift_executor
+  assembly_executor:
+    image: yehyunlee/scriptorium:assembly_executor

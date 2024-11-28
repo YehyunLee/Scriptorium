@@ -364,7 +364,14 @@ const Blog = ({
           </div>
           <div>
             <h2 className="text-2xl font-bold text-gold">{title}</h2>
-            <p className="text-gold/90 mt-2">{content}</p>
+            {/* Content is extremly long */}
+            {/* Wrap content in div to prevent markdown from rendering */}
+            {/* Ensure it does not go beyond the border, if so next line */}
+            <div className="mt-4 text-gold/50 whitespace-pre-wrap">
+              {content}
+            </div>          
+
+
             <div className="mt-4 text-sm text-gold/50">
               <p>
                 <span className="font-bold">Tags:</span> {tags || "None"}
