@@ -19,6 +19,7 @@ export const EditorWrapper = ({
 }: EditorWrapperProps) => {
   if (editorType === "monaco") {
     return (
+      <div className="h-full w-full overflow-hidden">
       <MonacoEditor
         height="100%"
         defaultLanguage={language}
@@ -27,24 +28,41 @@ export const EditorWrapper = ({
         onChange={(value) => onChange(value || "")}
         theme="vs-dark"
         options={{
-          fontSize: 14,
-          minimap: { enabled: true },
+            fontSize: window.innerWidth < 640 ? 12 : 14,
+            minimap: { 
+              enabled: window.innerWidth >= 640 
+            },
           scrollBeyondLastLine: false,
           automaticLayout: true,
           wordWrap: "on",
           tabSize: 2,
           readOnly,
+            padding: {
+              top: window.innerWidth < 640 ? 8 : 16,
+              bottom: window.innerWidth < 640 ? 8 : 16
+            },
+            folding: window.innerWidth >= 640,
+            lineNumbers: window.innerWidth >= 640 ? 'on' : 'off',
+            scrollbar: {
+              vertical: 'visible',
+              horizontal: 'visible',
+              verticalScrollbarSize: window.innerWidth < 640 ? 8 : 14,
+              horizontalScrollbarSize: window.innerWidth < 640 ? 8 : 14
+            }
         }}
       />
+      </div>
     );
   }
 
   return (
+    <div className="h-full w-full overflow-hidden">
     <HighlightEditor 
       value={value} 
       onChange={onChange} 
       language={language}
       readOnly={readOnly}
     />
+    </div>
   );
 };

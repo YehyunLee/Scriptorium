@@ -21,7 +21,7 @@ export default function BlogPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
     const [currentUserCommentRatings, setCurrentUserCommentRatings] = useState<any>({});
-    const [showReportInput, setShowReportInput] = useState(false);
+    const [showReportInput, setShowReportInput] = useState<number | boolean>(false);
     const [reportReason, setReportReason] = useState("");
 
     const handleReport = async () => {

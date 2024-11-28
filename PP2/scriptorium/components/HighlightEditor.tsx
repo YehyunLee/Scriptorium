@@ -48,10 +48,17 @@ export const HighlightEditor = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         readOnly={readOnly}
-        className="absolute top-0 left-0 w-full h-full bg-transparent text-transparent caret-white p-4 font-mono resize-none z-10"
+        className="absolute top-0 left-0 w-full h-full bg-transparent text-transparent 
+          caret-white font-mono resize-none z-10 
+          p-2 sm:p-4
+          text-sm sm:text-base
+          touch-manipulation"
         spellCheck="false"
       />
-      <pre className="absolute top-0 left-0 w-full h-full p-4 font-mono overflow-auto pointer-events-none">
+      <pre className="absolute top-0 left-0 w-full h-full 
+        p-2 sm:p-4 
+        text-sm sm:text-base
+        font-mono overflow-auto pointer-events-none">
         <code
           className={`language-${language}`}
           dangerouslySetInnerHTML={{ __html: highlightedCode || value }}
